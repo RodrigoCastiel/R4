@@ -31,7 +31,13 @@ public:
     virtual void mouseReleaseEvent(QMouseEvent* event);
     virtual void mouseMoveEvent(QMouseEvent* event);
 
+private slots:
+
+    // Game update events.
+    void gameLoopIteration();
+
 private:
     Ui::R4GLWidget *ui;
     MouseState mMouseState;
+    QTimer* mGameLoopTimer;
 };

@@ -1,9 +1,14 @@
 #include "R4GLWidget.h"
 #include "ui_R4GLWidget.h"
 
+#include <QTimer>
 #include <QEvent>
 #include <QMouseEvent>
-#include <QOpenGLFunctions_4_3_Core>  // Use OpenGL 4.3 - Core Profile.
+
+#include <iostream>
+#include "core/gl_core.h"
+
+using engine::glCore;
 
 R4GLWidget::R4GLWidget(QWidget *parent)
     : QOpenGLWidget(parent)
@@ -21,20 +26,37 @@ R4GLWidget::R4GLWidget(QWidget *parent)
     format.setProfile(QSurfaceFormat::CoreProfile);
     QSurfaceFormat::setDefaultFormat(format);
     this->setFormat(format);
+
+    // Set up timer.
+    mGameLoopTimer = new QTimer;
+    connect(mGameLoopTimer, SIGNAL(timeout()), this, SLOT(gameLoopIteration()));
+ 
+    double FPS = 60.0;
+    int period = static_cast<int>(1000.0/FPS);
+    mGameLoopTimer->start(period);
 }
 
 R4GLWidget::~R4GLWidget()
 {
     delete ui;
+    delete mGameLoopTimer;
+}
+
+void R4GLWidget::gameLoopIteration()
+{
+    static unsigned sFrame = 0;
+    //std::cout << "FRAME " << sFrame << std::endl;
+
+    QOpenGLWidget::update();
+
+    sFrame++;
 }
 
 void R4GLWidget::initializeGL()
 {
-    //QOpenGLFunctions::initializeOpenGLFunctions();
-
-    QOpenGLFunctions_4_3_Core *f =
-        QOpenGLContext::currentContext()->versionFunctions<QOpenGLFunctions_4_3_Core>();  
-    f->glClearColor(0.15, 0.15, 0.15, 0.0);
+    // Set OpenGL core for engine.
+    glCore = QOpenGLContext::currentContext()->versionFunctions<QOpenGLFunctions_4_3_Core>();
+    glCore->glClearColor(0.12, 0.12, 0.12, 0.0);
 }
 
 void R4GLWidget::resizeGL(int w, int h)
@@ -44,9 +66,7 @@ void R4GLWidget::resizeGL(int w, int h)
 
 void R4GLWidget::paintGL()
 {
-    QOpenGLFunctions_4_3_Core *f =
-        QOpenGLContext::currentContext()->versionFunctions<QOpenGLFunctions_4_3_Core>();
-    f->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glCore->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 }
 
