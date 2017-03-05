@@ -12,18 +12,18 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="renderer\render_engine.h">
-      <Filter>renderer</Filter>
-    </ClInclude>
     <ClInclude Include="core\gl_core.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\game_engine.h">
       <Filter>core</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="renderer\render_engine.cpp">
-      <Filter>renderer</Filter>
-    </ClCompile>
     <ClCompile Include="core\gl_core.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="core\game_engine.cpp">
       <Filter>core</Filter>
     </ClCompile>
   </ItemGroup>

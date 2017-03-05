@@ -8,6 +8,7 @@
 #include <iostream>
 #include "core/gl_core.h"
 
+using engine::GameEngine;
 using engine::glCore;
 
 R4GLWidget::R4GLWidget(QWidget *parent)
@@ -27,51 +28,65 @@ R4GLWidget::R4GLWidget(QWidget *parent)
     QSurfaceFormat::setDefaultFormat(format);
     this->setFormat(format);
 
+    // Install event filter.
+    this->installEventFilter(this);
+
     // Set up timer.
     mGameLoopTimer = new QTimer;
     connect(mGameLoopTimer, SIGNAL(timeout()), this, SLOT(gameLoopIteration()));
- 
     double FPS = 60.0;
     int period = static_cast<int>(1000.0/FPS);
     mGameLoopTimer->start(period);
+
+    // Build game engine.
+    mEngine = new GameEngine();
 }
 
 R4GLWidget::~R4GLWidget()
 {
     delete ui;
+    delete mEngine;
     delete mGameLoopTimer;
 }
 
 void R4GLWidget::gameLoopIteration()
 {
-    static unsigned sFrame = 0;
-    //std::cout << "FRAME " << sFrame << std::endl;
+    // Update game engine.
+    mEngine->Update();
 
     QOpenGLWidget::update();
-
-    sFrame++;
 }
 
 void R4GLWidget::initializeGL()
 {
-    // Set OpenGL core for engine.
+    // Set global OpenGL core.
     glCore = QOpenGLContext::currentContext()->versionFunctions<QOpenGLFunctions_4_3_Core>();
     glCore->glClearColor(0.12, 0.12, 0.12, 0.0);
+
+    // Load engine.
+    mEngine->Load();
 }
 
 void R4GLWidget::resizeGL(int w, int h)
 {
-    
+    // Forward resize event to engine.
+    mEngine->Resize(w, h);
 }
 
 void R4GLWidget::paintGL()
 {
     glCore->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+    // Render engine.
+    mEngine->Render();
+
 }
 
 void R4GLWidget::keyPressEvent(QKeyEvent* event)
 {
+    // Multikeys: 
+    // http://stackoverflow.com/questions/23816380/using-multiple-keys-in-qt-c
+
     // Set context -> mandatory in keyboard events.
     makeCurrent();
 
@@ -88,6 +103,8 @@ void R4GLWidget::keyPressEvent(QKeyEvent* event)
         break;
 
     default:
+        // Forward keyboard pressed keys.
+        mEngine->OnKeyboardPress(mPressedKeys);
         break;
     }
 
@@ -96,7 +113,16 @@ void R4GLWidget::keyPressEvent(QKeyEvent* event)
 
 void R4GLWidget::keyReleaseEvent(QKeyEvent* event)
 {
-    
+    // Set context -> mandatory in keyboard events.
+    makeCurrent();
+
+    switch (event->key())
+    {
+    default:
+        // Forward keyboard pressed keys.
+        mEngine->OnKeyboardRelease(mPressedKeys);
+        break;
+    }
 
     QOpenGLWidget::update();
 }
@@ -105,8 +131,6 @@ void R4GLWidget::mousePressEvent(QMouseEvent* event)
 {
     // Initialize mouse motion data.
     
-    
-
     // Update content (i.e. render model).
     QOpenGLWidget::update();
 }
@@ -128,4 +152,18 @@ void R4GLWidget::mouseMoveEvent(QMouseEvent* event)
 
     // Save last position.
     //mMouseState.mLastPos = event->pos();
+}
+
+bool R4GLWidget::eventFilter(QObject* obj, QEvent* event)
+{
+    if (event->type() == QEvent::KeyPress)
+    {
+        mPressedKeys += ((QKeyEvent*)event)->key();
+    }
+    else if (event->type() == QEvent::KeyRelease)
+    {
+        mPressedKeys -= ((QKeyEvent*)event)->key();
+    }
+
+    return false;
 }

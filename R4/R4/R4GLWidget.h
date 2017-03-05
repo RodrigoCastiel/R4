@@ -1,7 +1,10 @@
 #pragma once
 
+#include <QSet>
 #include <QOpenGLWidget>
 namespace Ui { class R4GLWidget; };
+
+#include "core/game_engine.h"
 
 struct MouseState
 {
@@ -31,13 +34,18 @@ public:
     virtual void mouseReleaseEvent(QMouseEvent* event);
     virtual void mouseMoveEvent(QMouseEvent* event);
 
+    virtual bool eventFilter(QObject* obj, QEvent* event);
+
 private slots:
 
     // Game update events.
     void gameLoopIteration();
 
 private:
-    Ui::R4GLWidget *ui;
-    MouseState mMouseState;
     QTimer* mGameLoopTimer;
+    MouseState mMouseState;
+    QSet<int> mPressedKeys;
+    engine::GameEngine* mEngine;
+
+    Ui::R4GLWidget *ui;
 };
