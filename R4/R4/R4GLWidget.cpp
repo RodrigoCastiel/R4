@@ -85,9 +85,6 @@ void R4GLWidget::paintGL()
 
 void R4GLWidget::keyPressEvent(QKeyEvent* event)
 {
-    // Multikeys: 
-    // http://stackoverflow.com/questions/23816380/using-multiple-keys-in-qt-c
-
     // Set context -> mandatory in keyboard events.
     makeCurrent();
 
@@ -182,6 +179,8 @@ void R4GLWidget::mouseMoveEvent(QMouseEvent* event)
     mMouseState.mLastPos = event->pos();
 }
 
+// Multikeys: 
+// http://stackoverflow.com/questions/23816380/using-multiple-keys-in-qt-c
 bool R4GLWidget::eventFilter(QObject* obj, QEvent* event)
 {
     if (event->type() == QEvent::KeyPress)

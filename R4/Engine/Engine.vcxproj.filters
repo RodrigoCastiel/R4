@@ -27,6 +27,12 @@
     <ClInclude Include="interaction\mouse_state.h">
       <Filter>interaction</Filter>
     </ClInclude>
+    <ClInclude Include="renderer\renderer.h">
+      <Filter>renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer\debug_renderer.h">
+      <Filter>renderer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="core\gl_core.cpp">
@@ -34,6 +40,9 @@
     </ClCompile>
     <ClCompile Include="core\game_engine.cpp">
       <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\debug_renderer.cpp">
+      <Filter>renderer</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

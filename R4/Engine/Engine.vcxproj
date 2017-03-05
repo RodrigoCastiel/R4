@@ -13,11 +13,14 @@
   <ItemGroup>
     <ClCompile Include="core\game_engine.cpp" />
     <ClCompile Include="core\gl_core.cpp" />
+    <ClCompile Include="renderer\debug_renderer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\game_engine.h" />
     <ClInclude Include="core\gl_core.h" />
     <ClInclude Include="interaction\mouse_state.h" />
+    <ClInclude Include="renderer\debug_renderer.h" />
+    <ClInclude Include="renderer\renderer.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{8426A60B-3181-4A3C-97EB-C4DBFCF8E2F7}</ProjectGuid>
