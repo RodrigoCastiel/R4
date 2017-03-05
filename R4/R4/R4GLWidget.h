@@ -5,12 +5,7 @@
 namespace Ui { class R4GLWidget; };
 
 #include "core/game_engine.h"
-
-struct MouseState
-{
-    QPoint mLastPos;
-    QPoint mSpeed;
-};
+#include "interaction/mouse_state.h"
 
 class R4GLWidget : public QOpenGLWidget
 {
@@ -43,9 +38,9 @@ private slots:
 
 private:
     QTimer* mGameLoopTimer;
-    MouseState mMouseState;
     QSet<int> mPressedKeys;
     engine::GameEngine* mEngine;
+    engine::MouseState mMouseState;
 
     Ui::R4GLWidget *ui;
 };

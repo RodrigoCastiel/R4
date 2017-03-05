@@ -17,6 +17,7 @@
   <ItemGroup>
     <ClInclude Include="core\game_engine.h" />
     <ClInclude Include="core\gl_core.h" />
+    <ClInclude Include="interaction\mouse_state.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{8426A60B-3181-4A3C-97EB-C4DBFCF8E2F7}</ProjectGuid>

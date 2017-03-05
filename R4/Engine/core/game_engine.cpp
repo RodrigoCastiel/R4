@@ -50,37 +50,37 @@ void GameEngine::OnKeyboardRelease(const QSet<int> & pressedKeys)
 
 // ================================================================================================
 
-void GameEngine::OnMouseMove()
+void GameEngine::OnMouseMove(const MouseState & mouseState)
 {
 
 }
 
-void GameEngine::OnMouseLeftDown()
+void GameEngine::OnMouseLeftDown(const MouseState & mouseState)
 {
 
 }
 
-void GameEngine::OnMouseLeftUp()
+void GameEngine::OnMouseLeftUp(const MouseState & mouseState)
 {
 
 }
 
-void GameEngine::OnMouseRightDown()
+void GameEngine::OnMouseRightDown(const MouseState & mouseState)
 {
 
 }
 
-void GameEngine::OnMouseRightUp()
+void GameEngine::OnMouseRightUp(const MouseState & mouseState)
 {
 
 }
 
-void GameEngine::OnMouseMiddleDown()
+void GameEngine::OnMouseMiddleDown(const MouseState & mouseState)
 {
 
 }
 
-void GameEngine::OnMouseMiddleUp()
+void GameEngine::OnMouseMiddleUp(const MouseState & mouseState)
 {
 
 }

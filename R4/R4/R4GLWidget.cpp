@@ -8,8 +8,9 @@
 #include <iostream>
 #include "core/gl_core.h"
 
-using engine::GameEngine;
 using engine::glCore;
+using engine::GameEngine;
+using engine::MouseState;
 
 R4GLWidget::R4GLWidget(QWidget *parent)
     : QOpenGLWidget(parent)
@@ -19,7 +20,7 @@ R4GLWidget::R4GLWidget(QWidget *parent)
 
     mMouseState = { {0, 0}, {0, 0} };
 
-    // Init OpenGL.
+    // Init OpenGL context.
     QSurfaceFormat format;
     format.setDepthBufferSize(24 /* bits */);
     format.setVersion(4, 3); // OpenGL 4.3.
@@ -129,14 +130,39 @@ void R4GLWidget::keyReleaseEvent(QKeyEvent* event)
 
 void R4GLWidget::mousePressEvent(QMouseEvent* event)
 {
-    // Initialize mouse motion data.
-    
+    // Filter mouse event to engine.
+    if (event->buttons() & Qt::LeftButton)  // Left down.
+    {
+        mEngine->OnMouseLeftDown(mMouseState);
+    }
+    if (event->buttons() & Qt::RightButton)  // Right down.
+    {
+        mEngine->OnMouseRightDown(mMouseState);
+    }
+    if (event->buttons() & Qt::MiddleButton) // Middle down.
+    {
+        mEngine->OnMouseMiddleDown(mMouseState);
+    }
+
     // Update content (i.e. render model).
     QOpenGLWidget::update();
 }
 
 void R4GLWidget::mouseReleaseEvent(QMouseEvent* event)
 {
+    // Filter mouse event to engine.
+    if (event->buttons() & Qt::LeftButton)  // Left down.
+    {
+        mEngine->OnMouseLeftUp(mMouseState);
+    }
+    if (event->buttons() & Qt::RightButton)  // Right down.
+    {
+        mEngine->OnMouseRightUp(mMouseState);
+    }
+    if (event->buttons() & Qt::MiddleButton) // Middle down.
+    {
+        mEngine->OnMouseMiddleUp(mMouseState);
+    }
    
     QOpenGLWidget::update();
 }
@@ -145,13 +171,15 @@ void R4GLWidget::mouseMoveEvent(QMouseEvent* event)
 {
     // Update mouse speed during motion.
     mMouseState.mSpeed = (event->pos() - mMouseState.mLastPos);  // Divide by time?
-    mMouseState.mLastPos = event->pos();
+    
+    // Forward mouse event to the engine.
+    mEngine->OnMouseMove(mMouseState);
 
     // Update content (i.e. render model).
     QOpenGLWidget::update();
 
     // Save last position.
-    //mMouseState.mLastPos = event->pos();
+    mMouseState.mLastPos = event->pos();
 }
 
 bool R4GLWidget::eventFilter(QObject* obj, QEvent* event)

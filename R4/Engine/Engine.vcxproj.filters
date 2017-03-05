@@ -10,6 +10,12 @@
     <Filter Include="core">
       <UniqueIdentifier>{c8618f05-28c1-4b91-a2e0-0ab511d2fc7c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="tool">
+      <UniqueIdentifier>{08662d9f-2d38-4ade-9496-61a4c9f1f0b7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="interaction">
+      <UniqueIdentifier>{440a2b7a-7c11-423e-a18c-a043a4055c2f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\gl_core.h">
@@ -17,6 +23,9 @@
     </ClInclude>
     <ClInclude Include="core\game_engine.h">
       <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="interaction\mouse_state.h">
+      <Filter>interaction</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

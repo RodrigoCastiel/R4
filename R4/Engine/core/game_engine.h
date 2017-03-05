@@ -10,6 +10,7 @@
 
 #include <QKeyEvent>
 #include <QMouseEvent>
+#include "interaction/mouse_state.h"
 
 namespace engine
 {
@@ -33,16 +34,16 @@ public:
     void OnKeyboardPress(const QSet<int> & pressedKeys);
     void OnKeyboardRelease(const QSet<int> & pressedKeys);
 
-    void OnMouseMove();
+    void OnMouseMove(const MouseState & mouseState);
 
-    void OnMouseLeftDown();
-    void OnMouseLeftUp();
+    void OnMouseLeftDown(const MouseState & mouseState);
+    void OnMouseLeftUp(const MouseState & mouseState);
 
-    void OnMouseRightDown();
-    void OnMouseRightUp();
+    void OnMouseRightDown(const MouseState & mouseState);
+    void OnMouseRightUp(const MouseState & mouseState);
 
-    void OnMouseMiddleDown();
-    void OnMouseMiddleUp();
+    void OnMouseMiddleDown(const MouseState & mouseState);
+    void OnMouseMiddleUp(const MouseState & mouseState);
 
 private:
 
