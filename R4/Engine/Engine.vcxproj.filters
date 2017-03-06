@@ -16,6 +16,12 @@
     <Filter Include="interaction">
       <UniqueIdentifier>{440a2b7a-7c11-423e-a18c-a043a4055c2f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="camera">
+      <UniqueIdentifier>{6e60e94b-380d-4d63-a795-fa7f321361b7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="helper">
+      <UniqueIdentifier>{0dbf9dd1-dc16-409d-89cc-28f8caad9cc1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\gl_core.h">
@@ -33,6 +39,21 @@
     <ClInclude Include="renderer\debug_renderer.h">
       <Filter>renderer</Filter>
     </ClInclude>
+    <ClInclude Include="renderer\render_engine.h">
+      <Filter>renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="mesh\mesh_group.h">
+      <Filter>mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="helper\useful_meshes.h">
+      <Filter>helper</Filter>
+    </ClInclude>
+    <ClInclude Include="camera\trackball_camera.h">
+      <Filter>camera</Filter>
+    </ClInclude>
+    <ClInclude Include="camera\projection_parameters.h">
+      <Filter>camera</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="core\gl_core.cpp">
@@ -43,6 +64,18 @@
     </ClCompile>
     <ClCompile Include="renderer\debug_renderer.cpp">
       <Filter>renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\render_engine.cpp">
+      <Filter>renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="mesh\mesh_group.cpp">
+      <Filter>mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="helper\useful_meshes.cpp">
+      <Filter>helper</Filter>
+    </ClCompile>
+    <ClCompile Include="camera\trackball_camera.cpp">
+      <Filter>camera</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

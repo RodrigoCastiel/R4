@@ -15,8 +15,18 @@ namespace engine
 
 struct MouseState
 {
-    QPoint mLastPos;
-    QPoint mSpeed;
+    // Cursor speed and position.
+    QPoint mLastPos {0, 0};
+    QPoint mSpeed   {0, 0};
+
+    // Mouse buttons state.
+    bool mLeftDown   { false };
+    bool mRightDown  { false };
+    bool mMiddleDown { false };
+    
+    // Keyboard command keys.
+    bool mCtrlDown  { false };
+    bool mShiftDown { false };
 };
 
 }  // namespace engine.

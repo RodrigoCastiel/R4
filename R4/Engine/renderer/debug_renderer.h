@@ -9,11 +9,12 @@
 #pragma once
 
 #include "renderer.h"
-//#include "gloo/group.h"
-//#include "gloo/camera.h"
 
 #include <QString>
+#include <QMatrix4x4>
 #include <QOpenGLShaderProgram>
+
+#include "mesh/mesh_group.h"
 
 namespace engine
 {
@@ -31,8 +32,8 @@ public:
   // Default constructor.
   DebugRenderer()
   : Renderer()
-  , mVertexShaderPath(  "../../shaders/debug/vertex_shader.glsl")
-  , mFragmentShaderPath("../../shaders/debug/fragment_shader.glsl")
+  , mVertexShaderPath(  "../shaders/debug/vertex_shader.glsl")
+  , mFragmentShaderPath("../shaders/debug/fragment_shader.glsl")
   { }
 
   ~DebugRenderer();
@@ -42,8 +43,7 @@ public:
   virtual void Bind(int renderingPass = 0);
 
   // Renders a specific object through a point of view.
-  //template <StorageFormat F>
-  //void Render(const MeshGroup<F>* mesh, Transform & model, Camera* camera, int pass=0) const;
+  void Render(const MeshGroup* mesh, const QMatrix4x4 & mvp, int pass=0) const;
 
   inline 
   unsigned GetNumRenderingPasses() const { return 1; }
@@ -73,12 +73,5 @@ protected:
   const QString mVertexShaderPath;
   const QString mFragmentShaderPath;
 };
-
-//template <StorageFormat F>
-//void DebugRenderer::Render(const MeshGroup<F>* mesh, Transform & model, Camera* camera, int pass) const
-//{
-//    //camera->SetUniformModelViewProj(mModelViewProjMatrixLoc, model);  // Proj * View * Model.
-//    //mesh->Render(pass);
-//}
 
 }  // namespace engine.

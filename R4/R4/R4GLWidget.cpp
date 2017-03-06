@@ -18,8 +18,6 @@ R4GLWidget::R4GLWidget(QWidget *parent)
     ui = new Ui::R4GLWidget();
     ui->setupUi(this);
 
-    mMouseState = { {0, 0}, {0, 0} };
-
     // Init OpenGL context.
     QSurfaceFormat format;
     format.setDepthBufferSize(24 /* bits */);
@@ -80,7 +78,6 @@ void R4GLWidget::paintGL()
 
     // Render engine.
     mEngine->Render();
-
 }
 
 void R4GLWidget::keyPressEvent(QKeyEvent* event)
@@ -130,14 +127,17 @@ void R4GLWidget::mousePressEvent(QMouseEvent* event)
     // Filter mouse event to engine.
     if (event->buttons() & Qt::LeftButton)  // Left down.
     {
+        mMouseState.mLeftDown = true;
         mEngine->OnMouseLeftDown(mMouseState);
     }
     if (event->buttons() & Qt::RightButton)  // Right down.
     {
+        mMouseState.mRightDown = true;
         mEngine->OnMouseRightDown(mMouseState);
     }
     if (event->buttons() & Qt::MiddleButton) // Middle down.
     {
+        mMouseState.mMiddleDown = true;
         mEngine->OnMouseMiddleDown(mMouseState);
     }
 
@@ -148,16 +148,19 @@ void R4GLWidget::mousePressEvent(QMouseEvent* event)
 void R4GLWidget::mouseReleaseEvent(QMouseEvent* event)
 {
     // Filter mouse event to engine.
-    if (event->buttons() & Qt::LeftButton)  // Left down.
+    if (mMouseState.mLeftDown && !(event->buttons() & Qt::LeftButton))  // Left up.
     {
+        mMouseState.mLeftDown = false;
         mEngine->OnMouseLeftUp(mMouseState);
     }
-    if (event->buttons() & Qt::RightButton)  // Right down.
+    if (mMouseState.mRightDown && !(event->buttons() & Qt::RightButton))  // Right up.
     {
+        mMouseState.mRightDown = false;
         mEngine->OnMouseRightUp(mMouseState);
     }
-    if (event->buttons() & Qt::MiddleButton) // Middle down.
+    if (mMouseState.mMiddleDown && !(event->buttons() & Qt::MiddleButton)) // Middle up.
     {
+        mMouseState.mMiddleDown = false;
         mEngine->OnMouseMiddleUp(mMouseState);
     }
    
@@ -191,6 +194,10 @@ bool R4GLWidget::eventFilter(QObject* obj, QEvent* event)
     {
         mPressedKeys -= ((QKeyEvent*)event)->key();
     }
+
+    // Check if command keys are pressed.
+    mMouseState.mCtrlDown  = mPressedKeys.contains(Qt::Key_Control);
+    mMouseState.mShiftDown = mPressedKeys.contains(Qt::Key_Shift);
 
     return false;
 }

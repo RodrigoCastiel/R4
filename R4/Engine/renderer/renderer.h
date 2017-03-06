@@ -40,8 +40,8 @@ public:
   virtual const QOpenGLShaderProgram* GetShaderProgram(int renderingPass = 0) const = 0;
 
   // Get attribute/uniform for the corresponding rendering pass.
-  virtual GLint GetAttribLocation( const std::string & name, int renderingPass = 0) const = 0;
-  virtual GLint GetUniformLocation(const std::string & name, int renderingPass = 0) const = 0;
+  virtual GLint GetAttribLocation( const QString & name, int renderingPass = 0) const = 0;
+  virtual GLint GetUniformLocation(const QString & name, int renderingPass = 0) const = 0;
 };
 
 }  // namespace gloo.

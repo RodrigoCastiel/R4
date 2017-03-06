@@ -10,7 +10,14 @@
 
 #include <QKeyEvent>
 #include <QMouseEvent>
+
+#include "helper/useful_meshes.h"
+#include "renderer/render_engine.h"
 #include "interaction/mouse_state.h"
+
+// XXX.
+#include "renderer/debug_renderer.h"
+#include "camera/trackball_camera.h"
 
 namespace engine
 {
@@ -46,7 +53,12 @@ public:
     void OnMouseMiddleUp(const MouseState & mouseState);
 
 private:
+    RenderEngine* mRenderEngine;
 
+    // XXX.
+    TrackballCamera* camera;
+    DebugRenderer* debugRenderer;
+    AxisMesh* axis;
 };
 
 }  // namespace engine.

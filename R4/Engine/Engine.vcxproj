@@ -11,16 +11,25 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="camera\trackball_camera.cpp" />
     <ClCompile Include="core\game_engine.cpp" />
     <ClCompile Include="core\gl_core.cpp" />
+    <ClCompile Include="helper\useful_meshes.cpp" />
+    <ClCompile Include="mesh\mesh_group.cpp" />
     <ClCompile Include="renderer\debug_renderer.cpp" />
+    <ClCompile Include="renderer\render_engine.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="camera\projection_parameters.h" />
+    <ClInclude Include="camera\trackball_camera.h" />
     <ClInclude Include="core\game_engine.h" />
     <ClInclude Include="core\gl_core.h" />
+    <ClInclude Include="helper\useful_meshes.h" />
     <ClInclude Include="interaction\mouse_state.h" />
+    <ClInclude Include="mesh\mesh_group.h" />
     <ClInclude Include="renderer\debug_renderer.h" />
     <ClInclude Include="renderer\renderer.h" />
+    <ClInclude Include="renderer\render_engine.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{8426A60B-3181-4A3C-97EB-C4DBFCF8E2F7}</ProjectGuid>
