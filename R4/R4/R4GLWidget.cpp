@@ -20,7 +20,7 @@ R4GLWidget::R4GLWidget(QWidget *parent)
 
     // Init OpenGL context.
     QSurfaceFormat format;
-    format.setDepthBufferSize(24 /* bits */);
+    format.setDepthBufferSize(32 /* bits */);
     format.setVersion(4, 3); // OpenGL 4.3.
     format.setSamples(16);   // Supersampling factor.
     format.setProfile(QSurfaceFormat::CoreProfile);

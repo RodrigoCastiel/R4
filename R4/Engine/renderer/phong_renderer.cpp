@@ -146,7 +146,7 @@ void PhongRenderer::SetLightAmbientComponent(const QVector3D & La) const
     mPhongShader->setUniformValue(mLaLoc, La);
 }
 
-void PhongRenderer::SetLightSource(const LightSource & lightSource, int slot) const
+void PhongRenderer::SetLightSourceCameraCoordinates(const LightSource & lightSource, int slot) const
 {
     const LightUniformPack & lightSourceUniform = mLightUniformArray[slot];
 
@@ -157,14 +157,14 @@ void PhongRenderer::SetLightSource(const LightSource & lightSource, int slot) co
     mPhongShader->setUniformValue(lightSourceUniform.mAlphaLoc, lightSource.mAlpha);  // Shininess.
 }
 
-void PhongRenderer::SetLightSourceInCameraCoordinates(const LightSource & lightSource, 
+void PhongRenderer::SetLightSourceWorldCoordinates(const LightSource & lightSource, 
                                                       const Camera * camera, int slot) const
 {
     const LightUniformPack & lightSourceUniform = mLightUniformArray[slot];
 
     // Transform position/direction into camera coordinates.
     QVector4D p = QVector4D(lightSource.mPos, 1.0f);
-    QVector4D d = QVector4D(lightSource.mDir, 1.0f);
+    QVector4D d = QVector4D(lightSource.mDir, 0.0f);
     const QMatrix4x4 & V = camera->GetViewMatrix();
 
     p = V * p;

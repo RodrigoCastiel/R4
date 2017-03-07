@@ -95,8 +95,16 @@ public:
 
   // Set light source/light properties.
   void SetLightAmbientComponent(const QVector3D & La) const;
-  void SetLightSource(const LightSource & lightSource, int slot) const;
-  void SetLightSourceInCameraCoordinates(const LightSource & lightSource, const Camera * camera, int slot) const;
+ 
+  // Sets light source at shader 'slot'. 
+  // Light source must be in camera coordinates. 
+  // Use this if you want the source to follow camera.
+  void SetLightSourceCameraCoordinates(const LightSource & lightSource, int slot) const;
+
+  // Sets light source at shader 'slot'. 
+  // Light source must be in world coordinates.
+  void SetLightSourceWorldCoordinates(
+      const LightSource & lightSource, const Camera * camera, int slot) const;
 
   // === Material configuration methods ===
   void SetMaterial(const Material & material) const;

@@ -26,6 +26,7 @@ struct Material
 in vec4 f_position;
 in vec4 f_normal;
 in vec2 f_uv;
+in vec4 f_tangent;
 
 out vec4 pixel_color;
 
@@ -40,7 +41,6 @@ uniform vec3 La = vec3(0.1);                // Ambient light component.
 uniform LightSource light[max_num_lights];  // Array of light sources.
 
 // === Texture === //
-uniform int use_color_map = 0;
 uniform sampler2D color_map;
 uniform sampler2D normal_map;
 
@@ -51,26 +51,33 @@ uniform Material material;
 
 void main()
 {
-  vec4 diffuse_color = texture(normal_map, f_uv);
-
-  if (use_color_map == 0)
-  {
-    diffuse_color = vec4(material.Kd, 1.0);
-  }
-
   if (lighting == 0)  // off.
   {
-    pixel_color = diffuse_color;
+    pixel_color = texture(color_map, f_uv);
   }
   else  // on.
   {
     vec3 Ka = material.Ka;
-    vec3 Kd = diffuse_color.xyz;
+    vec3 Kd = texture(color_map, f_uv).xyz;
     vec3 Ks = material.Ks;
 
     // Fragment data and light sources are in camera coordinates.
     vec3 I = Ka*La;
     vec3 n = f_normal.xyz;
+    vec3 t = f_tangent.xyz;
+
+    // Normal map provides coordinates in the fragment coordinate system.
+    // Since we have both normal and tangent vectors, we can calculate the bitangent,
+    // build a basis and transform normal map coordinates to world coordinates to
+    // compute the lighting.
+    vec3 b = cross(t, n);   // b = n x t.
+    mat3 M = mat3(t, b, n);
+
+    // rgb to normal.
+    vec3 normal = texture(normal_map, f_uv).xyz;
+    normal = 2*normal - vec3(1.0);
+
+    n = M * normal;
 
     for (int i = 0; i < num_lights; i++)
     {
@@ -82,11 +89,11 @@ void main()
       vec3 f = normalize(-f_position.xyz);                 // Unit vector from fragment to camera (origin).
       float d =    length(light[i].pos - f_position.xyz);  // Distance from fragment to light source.
       float alpha = light[i].alpha;
-  
+
       vec3 Id = light[i].Ld * max(dot(n, l), 0);              // Diffuse component.
       vec3 Is = light[i].Ls * pow(max(dot(r, f), 0), alpha);  // Specular component. TODO: shininess.
-	  
-	  I += (Kd*Id + Ks*Is);
+
+      I += (Kd*Id + Ks*Is);
     }
     
     pixel_color = vec4(I, 1.0);

@@ -17,6 +17,8 @@
 #include "debug_renderer.h"
 #include "phong_renderer.h"
 
+#include <QOpenGLTexture>
+
 namespace engine
 {
 
@@ -53,6 +55,8 @@ private:
 
     // XXX.
     TexturedQuadMesh* mTexturedQuad;
+    QOpenGLTexture* colorMap;
+    QOpenGLTexture* normalMap;
 };
 
 }  // namespace engine.

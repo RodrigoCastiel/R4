@@ -27,14 +27,23 @@ struct LightUniformPack
 
 struct LightSource
 {
-  // Position and direction (in world coordinates).
-  QVector3D mPos;
-  QVector3D mDir;
+    // Position and direction (in world coordinates).
+    QVector3D mPos;
+    QVector3D mDir;
 
-  // Phong illumination model data.
-  QVector3D mLd;  // Diffuse component.
-  QVector3D mLs;  // Specular component.
-  GLfloat mAlpha; // Shininess.
+    // Phong illumination model data.
+    QVector3D mLd;  // Diffuse component.
+    QVector3D mLs;  // Specular component.
+    GLfloat mAlpha; // Shininess.
+
+    /* Methods */
+    void SetPosition(const QVector3D & pos) { mPos = pos; }
+    void SetDirection(const QVector3D & dir) { mDir = dir; }
+
+    void SetDiffuse(  const QVector3D & diff) { mLd = diff; }
+    void SetSpecular( const QVector3D & spec) { mLs = spec; }
+    void SetShininess(float shininess) { mAlpha = shininess; }
+
 };
 
 

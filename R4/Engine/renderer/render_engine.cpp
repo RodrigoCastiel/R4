@@ -1,5 +1,7 @@
 #include "render_engine.h"
 
+#include <QImage>
+
 namespace engine
 {
 
@@ -19,6 +21,10 @@ RenderEngine::~RenderEngine()
     delete mPhongRenderer;
 
     delete mOriginAxis;
+
+    // XXX.
+    delete colorMap;
+    delete normalMap;
 }
 
 bool RenderEngine::Load()
@@ -37,6 +43,9 @@ bool RenderEngine::Load()
     GLint phong_norAttr = mPhongRenderer->GetNormalAttribLoc();
     GLint phong_texAttr = mPhongRenderer->GetTextureAttribLoc();
 
+    mPhongRenderer->SetTextureUnit("color_map", 0);
+    mPhongRenderer->SetTextureUnit("normal_map", 1);
+
     // Debug elements ---
     GLint debug_posAttr = mDebugRenderer->GetPositionAttribLoc();
     GLint debug_colAttr = mDebugRenderer->GetColorAttribLoc();
@@ -45,6 +54,15 @@ bool RenderEngine::Load()
 
     // XXX.
     mTexturedQuad = new TexturedQuadMesh(phong_posAttr, phong_norAttr, phong_texAttr);
+
+    // XXX.
+    colorMap = new QOpenGLTexture(QImage("../textures/177.jpg").mirrored());
+    colorMap->setMinificationFilter(QOpenGLTexture::LinearMipMapLinear);
+    colorMap->setMagnificationFilter(QOpenGLTexture::Linear);
+
+    normalMap = new QOpenGLTexture(QImage("../textures/177_norm.jpg").mirrored());
+    normalMap->setMinificationFilter(QOpenGLTexture::LinearMipMapLinear);
+    normalMap->setMagnificationFilter(QOpenGLTexture::Linear);
 
     return true;
 }
@@ -70,11 +88,15 @@ void RenderEngine::Render(Camera* camera)
     // XXX.
     mPhongRenderer->SetNumLightSources(1);
     mPhongRenderer->EnableLightSource(0);
-    mPhongRenderer->SetLightSourceInCameraCoordinates({ {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, -1.0f}, 
-                                                        {0.8f, 0.8f, 0.8f}, {0.2f, 0.2f, 0.2f}, 1.0f}, camera, 0);
+    mPhongRenderer->SetLightSourceCameraCoordinates({ {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, -1.0f}, 
+                                                      {0.8f, 0.8f, 0.8f}, {0.2f, 0.2f, 0.2f}, 1.0f}, 0);
 
     mPhongRenderer->SetMaterial(mTexturedQuad->GetMaterial());
-    mPhongRenderer->DisableColorMap();
+    //mPhongRenderer->DisableColorMap();
+    mPhongRenderer->EnableColorMap();
+    colorMap->bind(0);
+    normalMap->bind(1);
+
     QMatrix4x4 model;
     model.setToIdentity();
     mPhongRenderer->SetModelMatrix(model);
@@ -82,7 +104,6 @@ void RenderEngine::Render(Camera* camera)
     mPhongRenderer->EnableColorMap();
 
     // Render transparent objects such as leaves and trees.
-
 }
 
 void RenderEngine::Resize(int w, int h)
