@@ -8,38 +8,26 @@
 
 #pragma once
 
-#include <QMatrix4x4>
-
-#include "projection_parameters.h"
+#include "camera.h"
 
 namespace engine
 {
 
-class TrackballCamera
+class TrackballCamera : public Camera
 {
 public:
     // +++ Constructors/Destructor +++ ------------------------------------------------------------
     TrackballCamera() { }
     TrackballCamera(ProjectionParameters && projParameters)
-        : mProjParameters(projParameters) { }
+        : Camera(projParameters) { }
     TrackballCamera(const ProjectionParameters & projParameters)
-        : mProjParameters(projParameters) { }
+        : Camera(projParameters) { }
 
     ~TrackballCamera() { }
 
     // +++ Main +++ -------------------------------------------------------------------------------
 
-    void UpdateProjMatrix(int xo, int yo, int w, int h);
     void UpdateViewMatrix();
-
-    // Set projection parameters.
-    void SetProjectionParameters(const ProjectionParameters & projParameters);
-
-    inline const QMatrix4x4 & GetProjMatrix() const { return mProj; }
-    inline const QMatrix4x4 & GetViewMatrix() const { return mView; }
-
-    // Returns proj*view. You must update the matrices before!
-    QMatrix4x4 GetProjView() { return (mProj * mView); }
 
     // +++ Interaction +++ ------------------------------------------------------------------------
 
@@ -69,32 +57,12 @@ public:
     inline void SetTarget(const QVector3D & target) { mTarget = target; }
     const QVector3D & GetTarget() const { return mTarget; }
 
-    QVector3D GetCenter();
-
-    const ProjectionParameters & GetProjectionParameters() const { return mProjParameters; }
-    ProjectionParameters & GetProjectionParameters() { return mProjParameters; }
-
-    // +++ Geometry +++ ---------------------------------------------------------------------------
-
-    // Computes the vector which goes from camera center to mouse coordinates on projection plane.
-    QVector3D ComputeRayAt(float x_v, float y_v, float w, float h) const;
-
 protected:
     float mPhi    { 0.0f };  // Phi (spherical coordinates).
     float mTheta  { 0.0f };  // Theta (spherical coordinates).
     float mRadius { 1.0f };  // Radius (spherical coordinates).
     QVector3D mTarget { 0.0f, 0.0f, 0.0f };  // Target point.
     QVector3D mScale  { 1.0f, 1.0f, 1.0f };  // Scaling factors for x, y, z axis.
-
-    QMatrix4x4 mView;  // Specifies camera position, orientation and so on [a stack].
-    QMatrix4x4 mProj;  // Specifies projective transform.
-    ProjectionParameters mProjParameters;  // Specifies parameters of projection.
 };
-
-inline
-void TrackballCamera::SetProjectionParameters(const ProjectionParameters & projParameters)
-{
-    mProjParameters = projParameters;
-}
 
 }  // namespace engine.

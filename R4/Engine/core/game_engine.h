@@ -16,7 +16,6 @@
 #include "interaction/mouse_state.h"
 
 // XXX.
-#include "renderer/debug_renderer.h"
 #include "camera/trackball_camera.h"
 
 namespace engine
@@ -57,8 +56,6 @@ private:
 
     // XXX.
     TrackballCamera* camera;
-    DebugRenderer* debugRenderer;
-    AxisMesh* axis;
 };
 
 }  // namespace engine.

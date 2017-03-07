@@ -206,4 +206,51 @@ void GridMesh::Render() const
   mMeshGroup->Render();
 }
 
+// ============================================================================================= //
+
+TexturedQuadMesh::TexturedQuadMesh(GLint posAttr, GLint norAttr, GLint uvAttr)
+{
+    const int numVertices = 4;
+    const int numElements = 6;
+    const GLenum drawMode = GL_TRIANGLES;
+
+    // Initialize vertices.
+    GLfloat positions[] = {-1.0f, +1.0f, 0.0f,  +1.0f, +1.0f, 0.0f,
+                           +1.0f, -1.0f, 0.0f,  -1.0f, -1.0f, 0.0f};
+    GLfloat normals [] =   { 0.0f, 0.0f, 1.0f,  0.0f, 0.0f, 1.0f,
+                             0.0f, 0.0f, 1.0f,  0.0f, 0.0f, 1.0f};
+    GLfloat uvs[] = { 0.0f, 1.0f,  1.0f, 1.0f,
+                      1.0f, 0.0f,  0.0f, 0.0f};
+
+    const GLuint indices[] = {0, 1, 2, 2, 3, 0};
+
+    // Allocate mesh.
+    mMeshGroup = new MeshGroup(numVertices, numElements, drawMode);
+
+    // Specify its attributes.
+    mMeshGroup->SetVertexAttribList({3, 3, 2});
+
+    // Add rendering pass.
+    mMeshGroup->AddRenderingPass({{posAttr, true}, 
+                                  {norAttr, true}, 
+                                  {uvAttr, true}});
+
+    // Load data.
+    mMeshGroup->Load({positions, normals, uvs}, indices);
+
+    mMaterial = { {0.1f, 0.1f, 0.1f}, 
+                  {0.8f, 0.8f, 0.8f}, 
+                  {0.2f, 0.2f, 0.2f} };
+}
+
+TexturedQuadMesh::~TexturedQuadMesh()
+{
+    delete mMeshGroup;
+}
+
+void TexturedQuadMesh::Render() const
+{
+    mMeshGroup->Render();
+}
+
 }  // namespace engine.

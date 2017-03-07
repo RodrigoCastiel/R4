@@ -5,21 +5,83 @@ namespace engine
 
 RenderEngine::RenderEngine()
 {
+    mDebugRendering = true;
 
+    mDebugRenderer = new DebugRenderer();
+    mPhongRenderer = new PhongRenderer();
+
+    mOriginAxis = nullptr;
 }
 
 RenderEngine::~RenderEngine()
 {
+    delete mDebugRenderer;
+    delete mPhongRenderer;
 
+    delete mOriginAxis;
 }
 
-void RenderEngine::Load()
+bool RenderEngine::Load()
 {
+    glCore->glClearColor(0.1, 0.1, 0.1, 1.0);
     glCore->glEnable(GL_DEPTH_TEST);
+
+    bool debugRendererLoaded = mDebugRenderer->Load();
+    bool phongRendererLoaded = mPhongRenderer->Load();
+
+    // Check if shaders were sucessfully loaded.
+    if (!debugRendererLoaded || !phongRendererLoaded)
+        return false;
+
+    GLint phong_posAttr = mPhongRenderer->GetPositionAttribLoc();
+    GLint phong_norAttr = mPhongRenderer->GetNormalAttribLoc();
+    GLint phong_texAttr = mPhongRenderer->GetTextureAttribLoc();
+
+    // Debug elements ---
+    GLint debug_posAttr = mDebugRenderer->GetPositionAttribLoc();
+    GLint debug_colAttr = mDebugRenderer->GetColorAttribLoc();
+
+    mOriginAxis = new AxisMesh(debug_posAttr, debug_colAttr);
+
+    // XXX.
+    mTexturedQuad = new TexturedQuadMesh(phong_posAttr, phong_norAttr, phong_texAttr);
+
+    return true;
 }
 
-void RenderEngine::Render()
+void RenderEngine::Render(Camera* camera)
 {
+    glCore->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    // Render Debug Meshes.
+    if (mDebugRendering) 
+    {
+        mDebugRenderer->Bind();
+        mDebugRenderer->Render(mOriginAxis->GetMeshGroup(), camera->GetProjView());
+    }
+
+    // (TODO) Render onto depth buffer all objects that generate shadow.
+
+    // Render all objects.
+    mPhongRenderer->Bind();
+    mPhongRenderer->EnableLighting();
+    mPhongRenderer->SetCamera(camera);
+
+    // XXX.
+    mPhongRenderer->SetNumLightSources(1);
+    mPhongRenderer->EnableLightSource(0);
+    mPhongRenderer->SetLightSourceInCameraCoordinates({ {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, -1.0f}, 
+                                                        {0.8f, 0.8f, 0.8f}, {0.2f, 0.2f, 0.2f}, 1.0f}, camera, 0);
+
+    mPhongRenderer->SetMaterial(mTexturedQuad->GetMaterial());
+    mPhongRenderer->DisableColorMap();
+    QMatrix4x4 model;
+    model.setToIdentity();
+    mPhongRenderer->SetModelMatrix(model);
+    mTexturedQuad->Render();
+    mPhongRenderer->EnableColorMap();
+
+    // Render transparent objects such as leaves and trees.
 
 }
 

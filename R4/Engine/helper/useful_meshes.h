@@ -11,11 +11,14 @@
 #include <QVector3D>
 
 #include "core/gl_core.h"
+
+#include "mesh/material.h"
 #include "mesh/mesh_group.h"
 
 namespace engine
 {
 
+// Uses simple shader (position and color).
 struct AxisMesh
 {
 public:
@@ -31,6 +34,7 @@ private:
     MeshGroup* mMeshGroup;
 };
 
+// Uses simple shader (position and color).
 struct BoundingBoxMesh
 {
 public:
@@ -47,9 +51,10 @@ private:
     MeshGroup* mMeshGroup;
 };
 
+// Uses simple shader (position and color).
 struct GridMesh
 {
-    public:
+public:
     GridMesh(GLint positionAttribLoc, GLint colorAttribLoc, int width, int height, GLfloat tileSize = 1.0f,
             const QVector3D & rgb = {0.8f, 0.8f, 0.8f});
     ~GridMesh();
@@ -59,6 +64,24 @@ struct GridMesh
     const MeshGroup* GetMeshGroup() const { return mMeshGroup; }
 
 private:
+    MeshGroup* mMeshGroup;
+};
+
+struct TexturedQuadMesh
+{
+public:
+    TexturedQuadMesh(GLint posAttr, GLint norAttr, GLint uvAttr);
+    ~TexturedQuadMesh();
+
+    void Render() const;
+
+    const MeshGroup* GetMeshGroup() const { return mMeshGroup; }
+
+    void SetMaterial(const Material & material) { mMaterial = material; }
+    const Material & GetMaterial() const { return mMaterial; }
+
+private:
+    Material mMaterial;
     MeshGroup* mMeshGroup;
 };
 

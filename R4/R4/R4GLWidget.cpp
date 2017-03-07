@@ -74,8 +74,6 @@ void R4GLWidget::resizeGL(int w, int h)
 
 void R4GLWidget::paintGL()
 {
-    glCore->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
     // Render engine.
     mEngine->Render();
 }

@@ -9,7 +9,6 @@ GameEngine::GameEngine()
     mRenderEngine = new RenderEngine();
 
     // XXX.
-    debugRenderer = new DebugRenderer();
     camera = new TrackballCamera();
     camera->SetDistanceToTarget(4.0f);
 
@@ -17,6 +16,8 @@ GameEngine::GameEngine()
 
 GameEngine::~GameEngine()
 {
+    delete camera;
+
     delete mRenderEngine;
 }
 
@@ -25,39 +26,13 @@ GameEngine::~GameEngine()
 void GameEngine::Load()
 {
     mRenderEngine->Load();
-
-    // XXX.
-    bool loaded = debugRenderer->Load();
-
-    GLint posAttribLoc = debugRenderer->GetPositionAttribLoc();
-    GLint colAttribLoc = debugRenderer->GetColorAttribLoc();
-
-    axis = new AxisMesh(posAttribLoc, colAttribLoc);
-
 }
 
 void GameEngine::Render()
 {
-    mRenderEngine->Render();
-
-
-    // XXX.
-    //camera->SetPhi(20.0f);
-    //camera->RotateTheta(0.1f);
-    //camera->RotatePhi(0.04f);
-
-    QVector3D target = {1.0f, 10.0f, 2.0f};
-
-    camera->SetTarget(target);
     camera->UpdateViewMatrix();
-    debugRenderer->Bind();
-    debugRenderer->Render(axis->GetMeshGroup(), camera->GetProjView());
 
-    QMatrix4x4 model;
-    model.setToIdentity();
-    model.translate(target);
-    debugRenderer->Render(axis->GetMeshGroup(), camera->GetProjView());
-    debugRenderer->Render(axis->GetMeshGroup(), camera->GetProjView()*model);
+    mRenderEngine->Render(camera);
 }
 
 void GameEngine::Update()

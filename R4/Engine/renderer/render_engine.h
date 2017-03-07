@@ -10,6 +10,13 @@
 
 #include "core/gl_core.h"
 
+#include "camera/camera.h"
+
+#include "helper/useful_meshes.h"
+
+#include "debug_renderer.h"
+#include "phong_renderer.h"
+
 namespace engine
 {
 
@@ -20,16 +27,32 @@ public:
     RenderEngine();
     ~RenderEngine();
 
+    // +++ Rendering Queues +++ -----------------------------------------------
+
     // +++ Main +++ -----------------------------------------------------------
 
-    void Load();
-    void Render();
+    bool Load();
+    void Render(Camera* camera);
     void Resize(int w, int h);
 
     // +++ Settings +++ -------------------------------------------------------
 
+
+    // +++ Debug +++ ----------------------------------------------------------
+    void SetDebugRendering(bool debugRenderingOn) { mDebugRendering = debugRenderingOn; }
+
 private:
 
+    // Renderers.
+    DebugRenderer* mDebugRenderer;  // For debugging (axis, grid).
+    PhongRenderer* mPhongRenderer;  // For most of textured objects (normal map too).
+
+    // Debug data.
+    bool mDebugRendering;
+    AxisMesh* mOriginAxis;
+
+    // XXX.
+    TexturedQuadMesh* mTexturedQuad;
 };
 
 }  // namespace engine.
