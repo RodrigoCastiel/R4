@@ -15,6 +15,7 @@
     <ClCompile Include="camera\trackball_camera.cpp" />
     <ClCompile Include="core\game_engine.cpp" />
     <ClCompile Include="core\gl_core.cpp" />
+    <ClCompile Include="entities\terrain_chunk.cpp" />
     <ClCompile Include="helper\useful_meshes.cpp" />
     <ClCompile Include="mesh\mesh_group.cpp" />
     <ClCompile Include="renderer\debug_renderer.cpp" />
@@ -28,6 +29,7 @@
     <ClInclude Include="core\game_engine.h" />
     <ClInclude Include="core\gl_core.h" />
     <ClInclude Include="entities\light.h" />
+    <ClInclude Include="entities\terrain_chunk.h" />
     <ClInclude Include="helper\useful_meshes.h" />
     <ClInclude Include="interaction\mouse_state.h" />
     <ClInclude Include="mesh\material.h" />

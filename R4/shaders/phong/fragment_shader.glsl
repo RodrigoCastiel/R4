@@ -11,6 +11,8 @@ struct LightSource
   vec3 Ls;  // Specular component (in [0, 1]).
 
   float alpha;  // Shininess of specular component.
+  int is_spotlight;
+  float cone_angle;
 };
 
 struct Material
@@ -86,8 +88,22 @@ void main()
   
       vec3 Id = light[i].Ld * max(dot(n, l), 0);              // Diffuse component.
       vec3 Is = light[i].Ls * pow(max(dot(r, f), 0), alpha);  // Specular component. TODO: shininess.
+	  float attenuation = 1.0f;
 	  
-	  I += (Kd*Id + Ks*Is);
+	  if (light[i].is_spotlight == 1)
+	  {
+		float cone_angle_inv = 1.0f/light[i].cone_angle;
+		float similarity = max(dot(light[i].dir, -l), 0.0);
+		float angle = degrees(acos(similarity));
+
+		// Skip computation outside cone.
+		if (angle > light[i].cone_angle)
+			continue;
+		
+		attenuation = -cone_angle_inv*angle + 1.0f;		
+	  }
+	  
+	  I += attenuation*(Kd*Id + Ks*Is);
     }
     
     pixel_color = vec4(I, 1.0);

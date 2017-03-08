@@ -14,7 +14,7 @@ RenderEngine::RenderEngine()
                                        "../shaders/normal_mapping_phong/fragment_shader.glsl");
 
     //mPhongRenderer = new PhongRenderer("../shaders/phong/vertex_shader.glsl", 
-                                       //"../shaders/phong/fragment_shader.glsl");
+    //                                   "../shaders/phong/fragment_shader.glsl");
 
     mOriginAxis = nullptr;
 }
@@ -29,6 +29,7 @@ RenderEngine::~RenderEngine()
     // XXX.
     delete colorMap;
     delete normalMap;
+    delete terrainChunk;
 }
 
 bool RenderEngine::Load()
@@ -70,6 +71,11 @@ bool RenderEngine::Load()
     normalMap->setMinificationFilter(QOpenGLTexture::LinearMipMapLinear);
     normalMap->setMagnificationFilter(QOpenGLTexture::Linear);
 
+    terrainChunk = new TerrainChunk(50, 50);
+    terrainChunk->SetTexture(colorMap);
+    terrainChunk->SetMainRendererAttribList(phong_posAttr, phong_norAttr, phong_texAttr);
+    terrainChunk->Load();
+
     return true;
 }
 
@@ -92,22 +98,32 @@ void RenderEngine::Render(Camera* camera)
     mPhongRenderer->SetCamera(camera);
 
     // XXX.
-    mPhongRenderer->SetNumLightSources(1);
+    mPhongRenderer->SetNumLightSources(2);
     mPhongRenderer->EnableLightSource(0);
     mPhongRenderer->SetLightSourceCameraCoordinates({ {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, -1.0f}, 
-                                                      {0.8f, 0.8f, 0.8f}, {0.2f, 0.2f, 0.2f}, 1.0f}, 0);
+                                                      {0.8f, 0.8f, 0.8f}, {0.2f, 0.2f, 0.2f}, 1.0f, 1, 90.0f}, 0);
+
+    mPhongRenderer->EnableColorMap();
 
     mPhongRenderer->SetMaterial(mTexturedQuad->GetMaterial());
-    mPhongRenderer->DisableColorMap();
-    //mPhongRenderer->EnableColorMap();
     colorMap->bind(0);
     normalMap->bind(1);
 
+    static float theta = 0.0;
+    theta += 0.1;
+
     QMatrix4x4 model;
     model.setToIdentity();
+    model.translate(3 * std::cos(theta), 0.0, 0.0);
+    
     mPhongRenderer->SetModelMatrix(model);
     mTexturedQuad->Render();
-    mPhongRenderer->EnableColorMap();
+
+    ////mPhongRenderer->DisableColorMap();
+    //mPhongRenderer->SetMaterial(terrainChunk->GetMaterial());
+    //terrainChunk->GetTexture()->bind(0);
+    //terrainChunk->GetMeshGroup()->Render();
+    
 
     // Render transparent objects such as leaves and trees.
 }

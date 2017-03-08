@@ -8,16 +8,15 @@
 
 #pragma once
 
+#include <QOpenGLTexture>
+
 #include "core/gl_core.h"
-
 #include "camera/camera.h"
-
 #include "helper/useful_meshes.h"
+#include "entities/terrain_chunk.h"
 
 #include "debug_renderer.h"
 #include "phong_renderer.h"
-
-#include <QOpenGLTexture>
 
 namespace engine
 {
@@ -54,6 +53,7 @@ private:
     AxisMesh* mOriginAxis;
 
     // XXX.
+    TerrainChunk* terrainChunk;
     TexturedQuadMesh* mTexturedQuad;
     QOpenGLTexture* colorMap;
     QOpenGLTexture* normalMap;

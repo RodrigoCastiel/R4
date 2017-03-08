@@ -135,7 +135,7 @@ private:
   GLint mModelMatrixLoc  { -1 };
   GLint mNormalMatrixLoc { -1 };
 
-  // Lighting.  
+  // Lighting.
   GLint mLightingLoc { -1 };
   GLint mLaLoc { -1 };
   GLint mNumLightUniform { -1 };

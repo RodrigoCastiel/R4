@@ -65,6 +65,10 @@ bool PhongRenderer::Load()
         mLightUniformArray[i].mLdLoc    = mPhongShader->uniformLocation(light_prefix + "Ld");
         mLightUniformArray[i].mLsLoc    = mPhongShader->uniformLocation(light_prefix + "Ls");
         mLightUniformArray[i].mAlphaLoc = mPhongShader->uniformLocation(light_prefix + "alpha");
+        mLightUniformArray[i].mIsSpotlightLoc 
+            = mPhongShader->uniformLocation(light_prefix + "is_spotlight");
+        mLightUniformArray[i].mSpotlightAngleLoc 
+            = mPhongShader->uniformLocation(light_prefix + "cone_angle");
 
         mLightSwitchUniformArray[i] = mPhongShader->uniformLocation("light_switch[" + QString::number(i) + "]");
     }
@@ -151,10 +155,23 @@ void PhongRenderer::SetLightSourceCameraCoordinates(const LightSource & lightSou
     const LightUniformPack & lightSourceUniform = mLightUniformArray[slot];
 
     mPhongShader->setUniformValue(lightSourceUniform.mPosLoc, lightSource.mPos);  // Position.
-    mPhongShader->setUniformValue(lightSourceUniform.mDirLoc, lightSource.mDir);  // Direction.
     mPhongShader->setUniformValue(lightSourceUniform.mLdLoc,  lightSource.mLd);  // Diffuse component.
     mPhongShader->setUniformValue(lightSourceUniform.mLsLoc,  lightSource.mLs);  // Specular component.
     mPhongShader->setUniformValue(lightSourceUniform.mAlphaLoc, lightSource.mAlpha);  // Shininess.
+    mPhongShader->setUniformValue(lightSourceUniform.mIsSpotlightLoc, (int)lightSource.mIsSpotlight);
+
+    // Spotlight attributes:
+    if (lightSource.mIsSpotlight)
+    {
+        mPhongShader->setUniformValue(lightSourceUniform.mDirLoc, lightSource.mDir);  // Direction.
+        mPhongShader->setUniformValue(lightSourceUniform.mIsSpotlightLoc, 1);
+        mPhongShader->setUniformValue(  // Cone angle.
+            lightSourceUniform.mSpotlightAngleLoc, lightSource.mSpotlightAngle/2.0f);  
+    }
+    else
+    {
+        mPhongShader->setUniformValue(lightSourceUniform.mIsSpotlightLoc, 0);
+    }
 }
 
 void PhongRenderer::SetLightSourceWorldCoordinates(const LightSource & lightSource, 
@@ -171,11 +188,24 @@ void PhongRenderer::SetLightSourceWorldCoordinates(const LightSource & lightSour
     d = V * d;
     p = p / p[3];  // Normalize homogenous coordinates.
 
-    mPhongShader->setUniformValue(lightSourceUniform.mPosLoc, p.toVector3D());  // Position.
-    mPhongShader->setUniformValue(lightSourceUniform.mDirLoc, d.toVector3D());  // Direction.
+    mPhongShader->setUniformValue(lightSourceUniform.mPosLoc, p.toVector3D());   // Position.
     mPhongShader->setUniformValue(lightSourceUniform.mLdLoc,  lightSource.mLd);  // Diffuse component.
     mPhongShader->setUniformValue(lightSourceUniform.mLsLoc,  lightSource.mLs);  // Specular component.
     mPhongShader->setUniformValue(lightSourceUniform.mAlphaLoc, lightSource.mAlpha);  // Shininess.
+    mPhongShader->setUniformValue(lightSourceUniform.mIsSpotlightLoc, (int)lightSource.mIsSpotlight);
+
+    // Spotlight attributes:
+    if (lightSource.mIsSpotlight)
+    {
+        mPhongShader->setUniformValue(lightSourceUniform.mDirLoc, lightSource.mDir);  // Direction.
+        mPhongShader->setUniformValue(lightSourceUniform.mIsSpotlightLoc, 1);
+        mPhongShader->setUniformValue(  // Cone angle.
+            lightSourceUniform.mSpotlightAngleLoc, lightSource.mSpotlightAngle/2.0f);  
+    }
+    else
+    {
+        mPhongShader->setUniformValue(lightSourceUniform.mIsSpotlightLoc, 0);
+    }
 }
 
 void PhongRenderer::SetMaterial(const Material & material) const
