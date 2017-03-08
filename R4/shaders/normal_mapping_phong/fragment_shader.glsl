@@ -41,6 +41,7 @@ uniform vec3 La = vec3(0.1);                // Ambient light component.
 uniform LightSource light[max_num_lights];  // Array of light sources.
 
 // === Texture === //
+uniform int use_color_map = 0;
 uniform sampler2D color_map;
 uniform sampler2D normal_map;
 
@@ -51,14 +52,21 @@ uniform Material material;
 
 void main()
 {
+  vec4 diffuse_color = texture(color_map, f_uv);
+
+  if (use_color_map == 0)
+  {
+    diffuse_color = vec4(material.Kd, 1.0);
+  }
+
   if (lighting == 0)  // off.
   {
-    pixel_color = texture(color_map, f_uv);
+    pixel_color = vec4(material.Kd, 1.0);
   }
   else  // on.
   {
     vec3 Ka = material.Ka;
-    vec3 Kd = texture(color_map, f_uv).xyz;
+    vec3 Kd = diffuse_color.xyz;
     vec3 Ks = material.Ks;
 
     // Fragment data and light sources are in camera coordinates.
@@ -70,9 +78,13 @@ void main()
     // Since we have both normal and tangent vectors, we can calculate the bitangent,
     // build a basis and transform normal map coordinates to world coordinates to
     // compute the lighting.
-    vec3 b = cross(t, n);   // b = n x t.
+    vec3 b = cross(n, t);   // b = n x t.
     mat3 M = mat3(t, b, n);
 
+	// x y z
+	// t b n
+	// n = cross(t, b)
+	
     // rgb to normal.
     vec3 normal = texture(normal_map, f_uv).xyz;
     normal = 2*normal - vec3(1.0);

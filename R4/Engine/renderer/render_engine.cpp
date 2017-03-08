@@ -10,7 +10,11 @@ RenderEngine::RenderEngine()
     mDebugRendering = true;
 
     mDebugRenderer = new DebugRenderer();
-    mPhongRenderer = new PhongRenderer();
+    mPhongRenderer = new PhongRenderer("../shaders/normal_mapping_phong/vertex_shader.glsl", 
+                                       "../shaders/normal_mapping_phong/fragment_shader.glsl");
+
+    //mPhongRenderer = new PhongRenderer("../shaders/phong/vertex_shader.glsl", 
+                                       //"../shaders/phong/fragment_shader.glsl");
 
     mOriginAxis = nullptr;
 }
@@ -42,6 +46,7 @@ bool RenderEngine::Load()
     GLint phong_posAttr = mPhongRenderer->GetPositionAttribLoc();
     GLint phong_norAttr = mPhongRenderer->GetNormalAttribLoc();
     GLint phong_texAttr = mPhongRenderer->GetTextureAttribLoc();
+    GLint phong_tanAttr = mPhongRenderer->GetTangentAttribLoc();
 
     mPhongRenderer->SetTextureUnit("color_map", 0);
     mPhongRenderer->SetTextureUnit("normal_map", 1);
@@ -53,14 +58,15 @@ bool RenderEngine::Load()
     mOriginAxis = new AxisMesh(debug_posAttr, debug_colAttr);
 
     // XXX.
-    mTexturedQuad = new TexturedQuadMesh(phong_posAttr, phong_norAttr, phong_texAttr);
+    mTexturedQuad = new TexturedQuadMesh(phong_posAttr, phong_norAttr, 
+                                         phong_texAttr, phong_tanAttr);
 
     // XXX.
-    colorMap = new QOpenGLTexture(QImage("../textures/177.jpg").mirrored());
+    colorMap = new QOpenGLTexture(QImage("../textures/tiles/tile_color.jpg").mirrored());
     colorMap->setMinificationFilter(QOpenGLTexture::LinearMipMapLinear);
     colorMap->setMagnificationFilter(QOpenGLTexture::Linear);
 
-    normalMap = new QOpenGLTexture(QImage("../textures/177_norm.jpg").mirrored());
+    normalMap = new QOpenGLTexture(QImage("../textures/tiles/tile_normal.jpg").mirrored());
     normalMap->setMinificationFilter(QOpenGLTexture::LinearMipMapLinear);
     normalMap->setMagnificationFilter(QOpenGLTexture::Linear);
 
@@ -92,8 +98,8 @@ void RenderEngine::Render(Camera* camera)
                                                       {0.8f, 0.8f, 0.8f}, {0.2f, 0.2f, 0.2f}, 1.0f}, 0);
 
     mPhongRenderer->SetMaterial(mTexturedQuad->GetMaterial());
-    //mPhongRenderer->DisableColorMap();
-    mPhongRenderer->EnableColorMap();
+    mPhongRenderer->DisableColorMap();
+    //mPhongRenderer->EnableColorMap();
     colorMap->bind(0);
     normalMap->bind(1);
 

@@ -26,6 +26,7 @@ struct Material
 in vec4 f_position;
 in vec4 f_normal;
 in vec2 f_uv;
+//in vec4 f_tangent;
 
 out vec4 pixel_color;
 
@@ -51,7 +52,7 @@ uniform Material material;
 
 void main()
 {
-  vec4 diffuse_color = texture(normal_map, f_uv);
+  vec4 diffuse_color = texture(color_map, f_uv);
 
   if (use_color_map == 0)
   {

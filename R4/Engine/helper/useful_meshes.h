@@ -70,7 +70,7 @@ private:
 struct TexturedQuadMesh
 {
 public:
-    TexturedQuadMesh(GLint posAttr, GLint norAttr, GLint uvAttr);
+    TexturedQuadMesh(GLint posAttr, GLint norAttr, GLint uvAttr, GLint tangAttr=-1);
     ~TexturedQuadMesh();
 
     void Render() const;

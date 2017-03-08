@@ -208,7 +208,7 @@ void GridMesh::Render() const
 
 // ============================================================================================= //
 
-TexturedQuadMesh::TexturedQuadMesh(GLint posAttr, GLint norAttr, GLint uvAttr)
+TexturedQuadMesh::TexturedQuadMesh(GLint posAttr, GLint norAttr, GLint uvAttr, GLint tangAttr)
 {
     const int numVertices = 4;
     const int numElements = 6;
@@ -222,21 +222,32 @@ TexturedQuadMesh::TexturedQuadMesh(GLint posAttr, GLint norAttr, GLint uvAttr)
     GLfloat uvs[] = { 0.0f, 1.0f,  1.0f, 1.0f,
                       1.0f, 0.0f,  0.0f, 0.0f};
 
+    GLfloat tangents[] = {  1.0f, 0.0f, 0.0f,  1.0f, 0.0f, 0.0f,
+                            1.0f, 0.0f, 0.0f,  1.0f, 0.0f, 0.0f};
+
     const GLuint indices[] = {0, 1, 2, 2, 3, 0};
 
     // Allocate mesh.
     mMeshGroup = new MeshGroup(numVertices, numElements, drawMode);
 
-    // Specify its attributes.
-    mMeshGroup->SetVertexAttribList({3, 3, 2});
-
-    // Add rendering pass.
-    mMeshGroup->AddRenderingPass({{posAttr, true}, 
-                                  {norAttr, true}, 
-                                  {uvAttr, true}});
-
-    // Load data.
-    mMeshGroup->Load({positions, normals, uvs}, indices);
+    // Specify its attributes and add rendering pass. 
+    if (tangAttr != -1) 
+    {
+        mMeshGroup->SetVertexAttribList({3, 3, 2, 3});
+        mMeshGroup->AddRenderingPass({{posAttr, true}, 
+                                      {norAttr, true}, 
+                                      {uvAttr, true},
+                                      {tangAttr, true}});
+        mMeshGroup->Load({positions, normals, uvs, tangents}, indices);
+    } 
+    else 
+    {
+        mMeshGroup->SetVertexAttribList({3, 3, 2});
+        mMeshGroup->AddRenderingPass({{posAttr, true}, 
+                                      {norAttr, true}, 
+                                      {uvAttr, true}});
+        mMeshGroup->Load({positions, normals, uvs}, indices);
+    }
 
     mMaterial = { {0.1f, 0.1f, 0.1f}, 
                   {0.8f, 0.8f, 0.8f}, 

@@ -18,11 +18,11 @@ const GLint kNoUniform = -1;
 
 struct LightUniformPack
 {
-  GLint mPosLoc;    // Location of vec3 position.
-  GLint mDirLoc;    // Location of vec3 direction.
-  GLint mLdLoc;     // Location of diffuse component.
-  GLint mLsLoc;     // Location of specular component.
-  GLint mAlphaLoc;  // Location of alpha component.
+    GLint mPosLoc;    // Location of vec3 position.
+    GLint mDirLoc;    // Location of vec3 direction.
+    GLint mLdLoc;     // Location of diffuse component.
+    GLint mLsLoc;     // Location of specular component.
+    GLint mAlphaLoc;  // Location of alpha component.
 };
 
 struct LightSource
@@ -43,7 +43,6 @@ struct LightSource
     void SetDiffuse(  const QVector3D & diff) { mLd = diff; }
     void SetSpecular( const QVector3D & spec) { mLs = spec; }
     void SetShininess(float shininess) { mAlpha = shininess; }
-
 };
 
 
