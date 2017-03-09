@@ -14,7 +14,6 @@
 
 #include "core/gl_core.h"
 
-#include "renderer.h"
 #include "camera/camera.h"
 #include "entities/light.h"
 
@@ -26,20 +25,18 @@ namespace engine
 
 const int kMaxNumberLights = 8;
 
-class PhongRenderer : public Renderer
+class PhongRenderer
 {
 public:
   // Load a custom phong renderer if you need it. 
   PhongRenderer(const QString & vertexShaderPath,
                 const QString & fragmentShaderPath)
-  : Renderer()
-  , mVertexShaderPath(vertexShaderPath)
+  : mVertexShaderPath(vertexShaderPath)
   , mFragmentShaderPath(fragmentShaderPath)
   { }
 
   PhongRenderer()
-  : Renderer()
-  , mVertexShaderPath(  "../shaders/phong/vertex_shader.glsl")
+  : mVertexShaderPath(  "../shaders/phong/vertex_shader.glsl")
   , mFragmentShaderPath("../shaders/phong/fragment_shader.glsl")
   { }
 
@@ -54,7 +51,7 @@ public:
   void Render(const MeshGroup* mesh, const QMatrix4x4 & model, int pass=0) const;
 
   // Call bind before using PhongRenderer. Internally, it calls glUseProgram().
-  virtual void Bind(int renderingPass = 0);
+  void Bind(int renderingPass = 0);
 
   void SetCamera(const Camera* camera) const;
   void SetModelMatrix(const QMatrix4x4 & model) const;
@@ -66,15 +63,15 @@ public:
   GLint GetUniformLocation(const QString & name, int renderingPass = 0) const;
 
   // Extra methods (fast access).
-  GLint GetPositionAttribLoc() const { return mPositionAttribLoc; }
-  GLint GetTextureAttribLoc()  const { return mTextureAttribLoc;  }
-  GLint GetNormalAttribLoc()   const { return mNormalAttribLoc;   }
-  GLint GetTangentAttribLoc()  const { return mTangentAttribLoc;  }
+  inline GLint GetPositionAttribLoc() const { return mPositionAttribLoc; }
+  inline GLint GetTextureAttribLoc()  const { return mTextureAttribLoc;  }
+  inline GLint GetNormalAttribLoc()   const { return mNormalAttribLoc;   }
+  inline GLint GetTangentAttribLoc()  const { return mTangentAttribLoc;  }
 
-  GLint GetViewUniformLoc()   const { return mViewMatrixLoc; }
-  GLint GetProjUniformLoc()   const { return mProjMatrixLoc; }
-  GLint GetModelUniformLoc()  const { return mModelMatrixLoc;  }
-  GLint GetNormalUniformLoc() const { return mNormalMatrixLoc; }
+  inline GLint GetViewUniformLoc()   const { return mViewMatrixLoc; }
+  inline GLint GetProjUniformLoc()   const { return mProjMatrixLoc; }
+  inline GLint GetModelUniformLoc()  const { return mModelMatrixLoc;  }
+  inline GLint GetNormalUniformLoc() const { return mNormalMatrixLoc; }
 
   GLint GetLightAmbientComponentLoc() const { return mLaLoc; }
   LightUniformPack GetLightSourceUniformLoc(int slot) const { return mLightUniformArray[slot]; }
@@ -114,6 +111,9 @@ public:
   void EnableColorMap();
   void DisableColorMap();
 
+  void EnableNormalMap();
+  void DisableNormalMap();
+
   // Use the following methods to link a texture unit to a sampler on shader.
   // samplerName is your sampler uniform name on the shader.
   // slot is the number of the texture unit.
@@ -143,7 +143,8 @@ private:
   LightUniformPack mLightUniformArray[kMaxNumberLights];
 
   // Material and Texture.
-  GLint mUseColorMapUniform { -1 };
+  GLint mUseColorMapUniform  { -1 };
+  GLint mUseNormalMapUniform { -1 };
   MaterialUniformPack mMaterialUniform;  // Set of material uniforms.
 
   // Constant data (passed to constructor).
@@ -222,6 +223,18 @@ inline
 void PhongRenderer::DisableColorMap()
 {
     mPhongShader->setUniformValue(mUseColorMapUniform, 0);
+}
+
+inline
+void PhongRenderer::EnableNormalMap()
+{
+    mPhongShader->setUniformValue(mUseNormalMapUniform, 1);
+}
+
+inline
+void PhongRenderer::DisableNormalMap()
+{
+    mPhongShader->setUniformValue(mUseNormalMapUniform, 0);
 }
 
 }  // namespace gloo.

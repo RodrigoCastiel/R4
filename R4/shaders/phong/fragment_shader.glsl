@@ -52,6 +52,16 @@ uniform Material material;
 
 // === Code === //
 
+// Attenuation decreases linearly with the angle.
+float CalculateSpotlightAttenuation(in vec3 fragToLight, int i)
+{
+	float cone_angle_inv = 1.0f/light[i].cone_angle;
+	float similarity = max(-dot(light[i].dir, fragToLight), 0.0);
+	float angle = degrees(acos(similarity));
+
+	return max((-cone_angle_inv*angle + 1.0f), 0.0f);
+}
+
 void main()
 {
   vec4 diffuse_color = texture(color_map, f_uv);
@@ -81,27 +91,23 @@ void main()
         continue;
 
       vec3 l  = normalize(light[i].pos - f_position.xyz);  // Unit vector from fragment to light source.
-      vec3 r  = -reflect(l, n);                            // Reflection of light ray on fragment.
-      vec3 f = normalize(-f_position.xyz);                 // Unit vector from fragment to camera (origin).
-      float d =    length(light[i].pos - f_position.xyz);  // Distance from fragment to light source.
-      float alpha = light[i].alpha;
-  
-      vec3 Id = light[i].Ld * max(dot(n, l), 0);              // Diffuse component.
-      vec3 Is = light[i].Ls * pow(max(dot(r, f), 0), alpha);  // Specular component. TODO: shininess.
-	  float attenuation = 1.0f;
+      float attenuation = 1.0f;
 	  
 	  if (light[i].is_spotlight == 1)
 	  {
-		float cone_angle_inv = 1.0f/light[i].cone_angle;
-		float similarity = max(dot(light[i].dir, -l), 0.0);
-		float angle = degrees(acos(similarity));
-
-		// Skip computation outside cone.
-		if (angle > light[i].cone_angle)
-			continue;
+		attenuation = CalculateSpotlightAttenuation(l, i);
 		
-		attenuation = -cone_angle_inv*angle + 1.0f;		
+		if (attenuation == 0.0f)
+			continue;
 	  }
+ 
+	  vec3 r  = -reflect(l, n);                            // Reflection of light ray on fragment.
+      vec3 f = normalize(-f_position.xyz);                 // Unit vector from fragment to camera (origin).
+      float d =    length(light[i].pos - f_position.xyz);  // Distance from fragment to light source.
+      float alpha = light[i].alpha;
+
+      vec3 Id = light[i].Ld * max(dot(n, l), 0);              // Diffuse component.
+      vec3 Is = light[i].Ls * pow(max(dot(r, f), 0), alpha);  // Specular component.
 	  
 	  I += attenuation*(Kd*Id + Ks*Is);
     }

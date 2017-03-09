@@ -8,8 +8,6 @@
 
 #pragma once
 
-#include "renderer.h"
-
 #include <QString>
 #include <QMatrix4x4>
 #include <QOpenGLShaderProgram>
@@ -19,20 +17,18 @@
 namespace engine
 {
 
-class DebugRenderer : public Renderer
+class DebugRenderer
 {
 public:
   DebugRenderer(const QString & vertexShaderPath,
                 const QString & fragmentShaderPath)
-  : Renderer()
-  , mVertexShaderPath(vertexShaderPath)
+  : mVertexShaderPath(vertexShaderPath)
   , mFragmentShaderPath(fragmentShaderPath)
   { }
 
   // Default constructor.
   DebugRenderer()
-  : Renderer()
-  , mVertexShaderPath(  "../shaders/debug/vertex_shader.glsl")
+  : mVertexShaderPath(  "../shaders/debug/vertex_shader.glsl")
   , mFragmentShaderPath("../shaders/debug/fragment_shader.glsl")
   { }
 
@@ -40,7 +36,7 @@ public:
 
   bool Load();
 
-  virtual void Bind(int renderingPass = 0);
+  void Bind(int renderingPass = 0);
 
   // Renders a specific object through a point of view.
   void Render(const MeshGroup* mesh, const QMatrix4x4 & mvp, int pass=0) const;

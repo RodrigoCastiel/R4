@@ -104,18 +104,19 @@ void RenderEngine::Render(Camera* camera)
                                                       {0.8f, 0.8f, 0.8f}, {0.2f, 0.2f, 0.2f}, 1.0f, 1, 90.0f}, 0);
 
     mPhongRenderer->EnableColorMap();
+    mPhongRenderer->DisableNormalMap();
 
     mPhongRenderer->SetMaterial(mTexturedQuad->GetMaterial());
     colorMap->bind(0);
     normalMap->bind(1);
 
     static float theta = 0.0;
-    theta += 0.1;
+    theta += 0.01;
 
     QMatrix4x4 model;
     model.setToIdentity();
-    model.translate(3 * std::cos(theta), 0.0, 0.0);
-    
+    model.translate(3.0f*std::cos(theta), 0.0, 0.0);
+   
     mPhongRenderer->SetModelMatrix(model);
     mTexturedQuad->Render();
 

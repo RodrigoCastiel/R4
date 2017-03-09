@@ -43,7 +43,8 @@ uniform vec3 La = vec3(0.1);                // Ambient light component.
 uniform LightSource light[max_num_lights];  // Array of light sources.
 
 // === Texture === //
-uniform int use_color_map = 0;
+uniform int use_color_map  = 1;
+uniform int use_normal_map = 1;
 uniform sampler2D color_map;
 uniform sampler2D normal_map;
 
@@ -51,6 +52,35 @@ uniform sampler2D normal_map;
 uniform Material material;
 
 // === Code === //
+
+void NormalFromMap(in vec3 normal, out vec3 transformed_n)
+{
+	vec3 n = normal;
+    vec3 t = f_tangent.xyz;
+
+    // Normal map provides coordinates in the fragment coordinate system.
+    // Since we have both normal and tangent vectors, we can calculate the bitangent,
+    // build a basis and transform normal map coordinates to world coordinates to
+    // compute the lighting.
+    vec3 b = cross(n, t);   // b = n x t.
+    mat3 M = mat3(t, b, n);
+	
+    // rgb to normal.
+    n = texture(normal_map, f_uv).xyz;
+    n = 2*n - vec3(1.0);
+
+    transformed_n = M * n; 
+}
+
+// Attenuation decreases linearly with the angle.
+float CalculateSpotlightAttenuation(in vec3 fragToLight, int i)
+{
+	float cone_angle_inv = 1.0f/light[i].cone_angle;
+	float similarity = max(-dot(light[i].dir, fragToLight), 0.0);
+	float angle = degrees(acos(similarity));
+
+	return max((-cone_angle_inv*angle + 1.0f), 0.0f);
+}
 
 void main()
 {
@@ -73,21 +103,12 @@ void main()
 
     // Fragment data and light sources are in camera coordinates.
     vec3 I = Ka*La;
-    vec3 n = f_normal.xyz;
-    vec3 t = f_tangent.xyz;
-
-    // Normal map provides coordinates in the fragment coordinate system.
-    // Since we have both normal and tangent vectors, we can calculate the bitangent,
-    // build a basis and transform normal map coordinates to world coordinates to
-    // compute the lighting.
-    vec3 b = cross(n, t);   // b = n x t.
-    mat3 M = mat3(t, b, n);
+	vec3 n = f_normal.xyz;
 	
-    // rgb to normal.
-    vec3 normal = texture(normal_map, f_uv).xyz;
-    normal = 2*normal - vec3(1.0);
-
-    n = M * normal;
+	if (use_normal_map == 1) 
+	{
+		NormalFromMap(n, n);
+	}
 
     for (int i = 0; i < num_lights; i++)
     {
@@ -95,27 +116,23 @@ void main()
         continue;
 
       vec3 l  = normalize(light[i].pos - f_position.xyz);  // Unit vector from fragment to light source.
-      vec3 r  = -reflect(l, n);                            // Reflection of light ray on fragment.
+      float attenuation = 1.0f;
+	  
+	  if (light[i].is_spotlight == 1)
+	  {
+		attenuation = CalculateSpotlightAttenuation(l, i);
+		
+		if (attenuation == 0.0f)
+			continue;
+	  }
+ 
+	  vec3 r  = -reflect(l, n);                            // Reflection of light ray on fragment.
       vec3 f = normalize(-f_position.xyz);                 // Unit vector from fragment to camera (origin).
       float d =    length(light[i].pos - f_position.xyz);  // Distance from fragment to light source.
       float alpha = light[i].alpha;
 
       vec3 Id = light[i].Ld * max(dot(n, l), 0);              // Diffuse component.
-      vec3 Is = light[i].Ls * pow(max(dot(r, f), 0), alpha);  // Specular component. TODO: shininess.
-	  float attenuation = 1.0f;
-	  
-	  if (light[i].is_spotlight == 1)
-	  {
-		float cone_angle_inv = 1.0f/light[i].cone_angle;
-		float similarity = max(dot(light[i].dir, -l), 0.0);
-		float angle = degrees(acos(similarity));
-
-		// Skip computation outside cone.
-		if (angle > light[i].cone_angle)
-			continue;
-		
-		attenuation = -cone_angle_inv*angle + 1.0f;		
-	  }
+      vec3 Is = light[i].Ls * pow(max(dot(r, f), 0), alpha);  // Specular component.
 	  
 	  I += attenuation*(Kd*Id + Ks*Is);
     }

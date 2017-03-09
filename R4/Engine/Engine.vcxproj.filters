@@ -36,9 +36,6 @@
     <ClInclude Include="interaction\mouse_state.h">
       <Filter>interaction</Filter>
     </ClInclude>
-    <ClInclude Include="renderer\renderer.h">
-      <Filter>renderer</Filter>
-    </ClInclude>
     <ClInclude Include="renderer\debug_renderer.h">
       <Filter>renderer</Filter>
     </ClInclude>
