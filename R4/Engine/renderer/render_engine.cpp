@@ -2,6 +2,8 @@
 
 #include <QImage>
 
+#include "obj-loader/obj_parser.h"
+
 namespace engine
 {
 
@@ -29,7 +31,7 @@ RenderEngine::~RenderEngine()
     // XXX.
     delete colorMap;
     delete normalMap;
-    delete terrainChunk;
+    //delete terrainChunk;
 }
 
 bool RenderEngine::Load()
@@ -71,10 +73,20 @@ bool RenderEngine::Load()
     normalMap->setMinificationFilter(QOpenGLTexture::LinearMipMapLinear);
     normalMap->setMagnificationFilter(QOpenGLTexture::Linear);
 
-    terrainChunk = new TerrainChunk(50, 50);
+    /*terrainChunk = new TerrainChunk(50, 50);
     terrainChunk->SetTexture(colorMap);
     terrainChunk->SetMainRendererAttribList(phong_posAttr, phong_norAttr, phong_texAttr);
-    terrainChunk->Load();
+    terrainChunk->Load();*/
+
+    //ObjParser objParser;
+    //ObjData   objData;
+    //objParser.LoadObj("../models/peugeot-207/Peugeot_207.obj", objData, true);
+    //////objParser.LoadObj("../models/street-lamp/StreetLamp.obj", objData, true);
+    //testMesh = objData.ExportToMeshGroup(0, true);
+    //objData.ExportToMeshGroupGLB(0, true);
+    testMesh = new MeshGroup();
+    testMesh->Load("Peugeot_207_g12.glb");
+    testMesh->AddRenderingPass({ {phong_posAttr, true}, {phong_norAttr, true}, {phong_texAttr, true} });
 
     return true;
 }
@@ -104,7 +116,7 @@ void RenderEngine::Render(Camera* camera)
                                                       {0.8f, 0.8f, 0.8f}, {0.2f, 0.2f, 0.2f}, 1.0f, 1, 90.0f}, 0);
 
     mPhongRenderer->EnableColorMap();
-    mPhongRenderer->DisableNormalMap();
+    mPhongRenderer->EnableNormalMap();
 
     mPhongRenderer->SetMaterial(mTexturedQuad->GetMaterial());
     colorMap->bind(0);
@@ -115,10 +127,23 @@ void RenderEngine::Render(Camera* camera)
 
     QMatrix4x4 model;
     model.setToIdentity();
-    model.translate(3.0f*std::cos(theta), 0.0, 0.0);
-   
+    model.rotate(theta*4.0f, 0.0, 0.0, 1.0);
+    //model.translate(3.0f*std::cos(theta), 0.0, 0.0);
+
+    mPhongRenderer->EnableColorMap();
+    mPhongRenderer->EnableNormalMap();
+
     mPhongRenderer->SetModelMatrix(model);
-    mTexturedQuad->Render();
+    //mTexturedQuad->Render();
+
+    mPhongRenderer->DisableColorMap();
+    mPhongRenderer->DisableNormalMap();
+    model.setToIdentity();
+    model.scale(1e-3);
+    mPhongRenderer->SetModelMatrix(model);
+    testMesh->Render();
+    mPhongRenderer->EnableColorMap();
+    mPhongRenderer->EnableNormalMap();
 
     ////mPhongRenderer->DisableColorMap();
     //mPhongRenderer->SetMaterial(terrainChunk->GetMaterial());

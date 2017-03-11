@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>PrecomputationToolsClass</class>
+ <widget class="QMainWindow" name="PrecomputationToolsClass">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>879</width>
+    <height>519</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Precomputation Tools</string>
+  </property>
+  <widget class="QWidget" name="centralWidget">
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="0" column="0">
+     <widget class="ObjTool" name="objTool" native="true"/>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>879</width>
+     <height>36</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>File</string>
+    </property>
+    <addaction name="actionQuit"/>
+   </widget>
+   <widget class="QMenu" name="menuObj_FIle">
+    <property name="title">
+     <string>Obj Tool</string>
+    </property>
+    <addaction name="actionLoadObj"/>
+    <addaction name="separator"/>
+    <addaction name="actionGenerateGLB"/>
+    <addaction name="actionGenerateBBH"/>
+    <addaction name="separator"/>
+   </widget>
+   <addaction name="menuFile"/>
+   <addaction name="menuObj_FIle"/>
+  </widget>
+  <action name="actionGenerateGLB">
+   <property name="text">
+    <string>Generate GLB file set</string>
+   </property>
+  </action>
+  <action name="actionGenerateBBH">
+   <property name="text">
+    <string>Generate BBH file</string>
+   </property>
+  </action>
+  <action name="actionGenerate_RIG_file">
+   <property name="text">
+    <string>Generate RIG file</string>
+   </property>
+  </action>
+  <action name="actionLoad_Obj">
+   <property name="text">
+    <string>Load Obj</string>
+   </property>
+  </action>
+  <action name="actionQuit">
+   <property name="text">
+    <string>Quit</string>
+   </property>
+  </action>
+  <action name="actionLoadObj">
+   <property name="text">
+    <string>Load .obj file</string>
+   </property>
+  </action>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>ObjTool</class>
+   <extends>QWidget</extends>
+   <header>objtool.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="PrecomputationTools.qrc"/>
+ </resources>
+ <connections/>
+</ui>

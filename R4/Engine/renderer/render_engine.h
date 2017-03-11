@@ -53,10 +53,11 @@ private:
     AxisMesh* mOriginAxis;
 
     // XXX.
-    TerrainChunk* terrainChunk;
+    //TerrainChunk* terrainChunk;
     TexturedQuadMesh* mTexturedQuad;
     QOpenGLTexture* colorMap;
     QOpenGLTexture* normalMap;
+    MeshGroup* testMesh;
 };
 
 }  // namespace engine.

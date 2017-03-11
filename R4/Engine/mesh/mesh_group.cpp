@@ -1,6 +1,9 @@
 #include "mesh_group.h"
-#include <cassert>
 
+#include <cassert>
+#include <cstdio>
+
+#include "helper/glb_file.h"
 
 namespace engine
 {
@@ -10,6 +13,15 @@ MeshGroup::MeshGroup(int numVertices, int numElements, GLenum drawMode, GLenum d
 , mNumElements(numElements)
 , mDataUsage(dataUsage)
 , mDrawMode(drawMode)
+{
+
+}
+
+MeshGroup::MeshGroup(GLenum dataUsage)
+    : mNumVertices(0)
+    , mNumElements(0)
+    , mDataUsage(dataUsage)
+    , mDrawMode(GL_TRIANGLES)
 {
 
 }
@@ -36,21 +48,56 @@ void MeshGroup::Render(unsigned renderingPass) const
    );
 }
 
+
+void MeshGroup::SetVertexAttribList(std::vector<GLuint> && vertexAttribList)
+{
+    mVertexAttributeList = vertexAttribList;
+
+    mVertexSize = 0;
+    mNumAttributes = 0;
+    for (GLuint attribSize : mVertexAttributeList) 
+    {
+        mVertexSize += attribSize;
+        mNumAttributes++;
+    }
+
+    // Generate geometry buffers.
+    glCore->glGenBuffers(1, &mVbo);       // Vertex buffer object.
+    glCore->glGenBuffers(1, &mEab);       // Element array buffer.
+}
+
+void MeshGroup::SetVertexAttribList(const std::vector<GLuint> & vertexAttribList)
+{
+    mVertexAttributeList = vertexAttribList;
+
+    mVertexSize = 0;
+    mNumAttributes = 0;
+    for (GLuint attribSize : mVertexAttributeList) 
+    {
+        mVertexSize += attribSize;
+        mNumAttributes++;
+    }
+
+    // Generate geometry buffers.
+    glCore->glGenBuffers(1, &mVbo);       // Vertex buffer object.
+    glCore->glGenBuffers(1, &mEab);       // Element array buffer.
+}
+
 void MeshGroup::SetVertexAttribList(std::initializer_list<GLuint> vertexAttribList)
 {
-  mVertexAttributeList = std::vector<GLuint>(vertexAttribList);
+    mVertexAttributeList = std::vector<GLuint>(vertexAttribList);
 
-  mVertexSize = 0;
-  mNumAttributes = 0;
-  for (GLuint attribSize : mVertexAttributeList) 
-  {
-    mVertexSize += attribSize;
-    mNumAttributes++;
-  }
+    mVertexSize = 0;
+    mNumAttributes = 0;
+    for (GLuint attribSize : mVertexAttributeList) 
+    {
+        mVertexSize += attribSize;
+        mNumAttributes++;
+    }
 
-  // Generate geometry buffers.
-  glCore->glGenBuffers(1, &mVbo);       // Vertex buffer object.
-  glCore->glGenBuffers(1, &mEab);       // Element array buffer.
+    // Generate geometry buffers.
+    glCore->glGenBuffers(1, &mVbo);       // Vertex buffer object.
+    glCore->glGenBuffers(1, &mEab);       // Element array buffer.
 }
 
 int MeshGroup::AddRenderingPass(const std::vector<std::pair<GLint, bool>> & attribList)
@@ -201,4 +248,42 @@ void MeshGroup::BuildVAO(const std::vector<std::pair<GLint, bool>> & attribList)
   }
 }
 
-}  // namespace glCore->gloo.
+bool MeshGroup::Load(const std::string & glbFilename)
+{
+    // Read GLB file =========================================================
+    const char* filename = glbFilename.c_str();
+    FILE* glbFile = fopen(filename, "rb");
+
+    if (glbFile == NULL)
+        return false;
+
+    // Read header.
+    GLB_FileHeader header;
+    fread(&header, sizeof(GLB_FileHeader), 1, glbFile);
+
+    mNumVertices = header._num_vertices;
+    mNumElements = header._num_elements;
+    mDrawMode = header._draw_mode;
+
+    // Build vertex attribute list.
+    std::vector<GLuint> attributeList;
+    int numAttributes = header._num_attributes;
+    for (int i = 0; i < numAttributes; i++) 
+    {
+        attributeList.push_back(header._vertex_format[i]);
+    }
+    MeshGroup::SetVertexAttribList(attributeList);
+
+    // Read buffer.
+    int bufferSize = this->GetVertexSize() * mNumVertices;
+    std::vector<GLfloat> buffer(bufferSize);
+
+    fread(buffer.data(), sizeof(GLfloat)*bufferSize, 1, glbFile);
+    fclose(glbFile);
+
+    // Upload it to graphics card.
+    return this->Load(buffer.data(), nullptr);
+}
+
+
+}  // namespace engine.

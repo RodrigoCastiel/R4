@@ -26,10 +26,13 @@ public:
     /* Most used methods */
     MeshGroup(int numVertices, int numElements, GLenum drawMode = GL_TRIANGLE_STRIP,
             GLenum dataUsage = GL_STATIC_DRAW);
+    MeshGroup(GLenum dataUsage = GL_STATIC_DRAW);
 
     ~MeshGroup();
 
     // Specifies which data/properties the vertices contain.
+    void SetVertexAttribList(std::vector<GLuint> && vertexAttribList);
+    void SetVertexAttribList(const std::vector<GLuint> & vertexAttribList);
     void SetVertexAttribList(std::initializer_list<GLuint> vertexAttribList);
 
     // Adds a different way of rendering the object - each one might use different 
@@ -40,9 +43,16 @@ public:
     // Should be called on display function (it calls glDrawElements).
     void Render(unsigned renderingPass = 0) const;
 
-    // TODO: document.
+    // Loads VBO from 'buffer' and EAB from 'indices'.
     bool Load(const GLfloat* buffer, const GLuint* indices);
+    
+    // Loads VBO from list of buffers and EAB from 'indices'.
     bool Load(const std::vector<GLfloat*> & bufferList, const GLuint* indices);
+
+    // Loads VBO and EAB from binary file.
+    // '.glb' => graphics library buffer binary file.
+    // Automatically sets vertex attribute list.
+    bool Load(const std::string & glbFilename = "default.glb");
 
     // TODO: document.
     bool Update(const GLfloat* buffer);
