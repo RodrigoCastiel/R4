@@ -44,7 +44,7 @@
       <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
     </ClCompile>
     <Link>
-      <SubSystem>Windows</SubSystem>
+      <SubSystem>Console</SubSystem>
       <OutputFile>$(OutDir)\$(ProjectName).exe</OutputFile>
       <AdditionalLibraryDirectories>$(SolutionDir)\$(Platform)\$(Configuration);$(QTDIR)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -60,7 +60,7 @@
       <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
     </ClCompile>
     <Link>
-      <SubSystem>Windows</SubSystem>
+      <SubSystem>Console</SubSystem>
       <OutputFile>$(OutDir)\$(ProjectName).exe</OutputFile>
       <AdditionalLibraryDirectories>$(SolutionDir)\$(Platform)\$(Configuration);$(QTDIR)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>false</GenerateDebugInformation>
@@ -88,6 +88,8 @@
     </ClCompile>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="ObjTool.cpp" />
+    <ClCompile Include="obj_data.cpp" />
+    <ClCompile Include="obj_parser.cpp" />
     <ClCompile Include="PrecomputationTools.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -117,6 +119,10 @@
   <ItemGroup>
     <ClInclude Include="GeneratedFiles\ui_ObjTool.h" />
     <ClInclude Include="GeneratedFiles\ui_PrecomputationTools.h" />
+    <ClInclude Include="obj_data.h" />
+    <ClInclude Include="obj_face.h" />
+    <ClInclude Include="obj_material.h" />
+    <ClInclude Include="obj_parser.h" />
     <CustomBuild Include="ObjTool.h">
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Moc%27ing ObjTool.h...</Message>

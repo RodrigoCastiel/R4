@@ -6,8 +6,8 @@
 #include <QMessageBox>
 #include <QProgressDialog>
 
-using engine::ObjData;
-using engine::ObjParser;
+using obj_tool::ObjData;
+using obj_tool::ObjParser;
 
 ObjTool::ObjTool(QWidget *parent)
     : QWidget(parent)
@@ -33,16 +33,18 @@ void ObjTool::OnLoadObj()
     }*/
 
     qDebug() << "ObjTool::OnLoadObj()\n";
-    QString filename = QFileDialog::getOpenFileName(this, tr("Open .OBJ file"), "", tr("OBJ (*.obj);"));
+    QString filePath = QFileDialog::getOpenFileName(this, tr("Open .OBJ file"), "", tr("OBJ (*.obj);"));
+    QFileInfo fileInfo(filePath);
 
-    if (filename.isEmpty())
+    if (filePath.isEmpty())
         return;
 
     QMessageBox::information(this, tr("Please WAIT!"),
         "PLEASE WAIT!");
 
     mObjData.Clear();
-    bool loaded = mObjParser.LoadObj(filename.toStdString(), mObjData, false);
+    bool loaded = mObjParser.LoadObj(fileInfo.absolutePath().toStdString(),
+                                     fileInfo.fileName().toStdString(), mObjData, true);
 
     if (!loaded)
     {
@@ -53,7 +55,7 @@ void ObjTool::OnLoadObj()
     }
 
     // Update UI data.
-    ui->label_Status->setText(filename);
+    ui->label_Status->setText(filePath);
     ui->lineEditNumVertices->setText(QString::number(mObjData.GetNumVertices()));
     ui->lineEditNumNormals->setText(QString::number(mObjData.GetNumNormals()));
     ui->lineEditNumUVs->setText(QString::number(mObjData.GetNumUVs()));

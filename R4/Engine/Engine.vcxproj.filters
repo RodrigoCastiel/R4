@@ -25,9 +25,6 @@
     <Filter Include="entities">
       <UniqueIdentifier>{45d685eb-b7da-4694-95c1-dbee11465485}</UniqueIdentifier>
     </Filter>
-    <Filter Include="obj-loader">
-      <UniqueIdentifier>{7b6fd976-5234-4629-83d4-5448d5a6d1cd}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\gl_core.h">
@@ -75,16 +72,10 @@
     <ClInclude Include="mesh\static_object.h">
       <Filter>mesh</Filter>
     </ClInclude>
-    <ClInclude Include="obj-loader\obj_face.h">
-      <Filter>obj-loader</Filter>
-    </ClInclude>
-    <ClInclude Include="obj-loader\obj_parser.h">
-      <Filter>obj-loader</Filter>
-    </ClInclude>
-    <ClInclude Include="obj-loader\obj_data.h">
-      <Filter>obj-loader</Filter>
-    </ClInclude>
     <ClInclude Include="helper\glb_file.h">
+      <Filter>helper</Filter>
+    </ClInclude>
+    <ClInclude Include="helper\mtllib_file.h">
       <Filter>helper</Filter>
     </ClInclude>
   </ItemGroup>
@@ -121,12 +112,6 @@
     </ClCompile>
     <ClCompile Include="mesh\static_object.cpp">
       <Filter>mesh</Filter>
-    </ClCompile>
-    <ClCompile Include="obj-loader\obj_parser.cpp">
-      <Filter>obj-loader</Filter>
-    </ClCompile>
-    <ClCompile Include="obj-loader\obj_data.cpp">
-      <Filter>obj-loader</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

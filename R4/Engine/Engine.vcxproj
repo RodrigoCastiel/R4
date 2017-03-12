@@ -19,8 +19,6 @@
     <ClCompile Include="helper\useful_meshes.cpp" />
     <ClCompile Include="mesh\mesh_group.cpp" />
     <ClCompile Include="mesh\static_object.cpp" />
-    <ClCompile Include="obj-loader\obj_data.cpp" />
-    <ClCompile Include="obj-loader\obj_parser.cpp" />
     <ClCompile Include="renderer\debug_renderer.cpp" />
     <ClCompile Include="renderer\phong_renderer.cpp" />
     <ClCompile Include="renderer\render_engine.cpp" />
@@ -34,14 +32,12 @@
     <ClInclude Include="entities\light.h" />
     <ClInclude Include="entities\terrain_chunk.h" />
     <ClInclude Include="helper\glb_file.h" />
+    <ClInclude Include="helper\mtllib_file.h" />
     <ClInclude Include="helper\useful_meshes.h" />
     <ClInclude Include="interaction\mouse_state.h" />
     <ClInclude Include="mesh\material.h" />
     <ClInclude Include="mesh\mesh_group.h" />
     <ClInclude Include="mesh\static_object.h" />
-    <ClInclude Include="obj-loader\obj_data.h" />
-    <ClInclude Include="obj-loader\obj_parser.h" />
-    <ClInclude Include="obj-loader\obj_face.h" />
     <ClInclude Include="renderer\debug_renderer.h" />
     <ClInclude Include="renderer\phong_renderer.h" />
     <ClInclude Include="renderer\render_engine.h" />

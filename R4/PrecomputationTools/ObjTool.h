@@ -2,8 +2,8 @@
 
 #include <QWidget>
 
-#include "obj-loader/obj_data.h"
-#include "obj-loader/obj_parser.h"
+#include "obj_data.h"
+#include "obj_parser.h"
 
 namespace Ui { class ObjTool; };
 
@@ -26,6 +26,6 @@ private:
     Ui::ObjTool *ui;
 
     bool mObjLoaded { false };
-    engine::ObjData mObjData;
-    engine::ObjParser mObjParser;
+    obj_tool::ObjData mObjData;
+    obj_tool::ObjParser mObjParser;
 };

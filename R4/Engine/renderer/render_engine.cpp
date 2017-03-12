@@ -2,8 +2,6 @@
 
 #include <QImage>
 
-#include "obj-loader/obj_parser.h"
-
 namespace engine
 {
 
@@ -78,12 +76,6 @@ bool RenderEngine::Load()
     terrainChunk->SetMainRendererAttribList(phong_posAttr, phong_norAttr, phong_texAttr);
     terrainChunk->Load();*/
 
-    //ObjParser objParser;
-    //ObjData   objData;
-    //objParser.LoadObj("../models/peugeot-207/Peugeot_207.obj", objData, true);
-    //////objParser.LoadObj("../models/street-lamp/StreetLamp.obj", objData, true);
-    //testMesh = objData.ExportToMeshGroup(0, true);
-    //objData.ExportToMeshGroupGLB(0, true);
     testMesh = new MeshGroup();
     testMesh->Load("Peugeot_207_g12.glb");
     testMesh->AddRenderingPass({ {phong_posAttr, true}, {phong_norAttr, true}, {phong_texAttr, true} });
