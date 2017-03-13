@@ -63,9 +63,6 @@
     <ClInclude Include="entities\light.h">
       <Filter>entities</Filter>
     </ClInclude>
-    <ClInclude Include="mesh\material.h">
-      <Filter>mesh</Filter>
-    </ClInclude>
     <ClInclude Include="entities\terrain_chunk.h">
       <Filter>entities</Filter>
     </ClInclude>
@@ -75,8 +72,11 @@
     <ClInclude Include="helper\glb_file.h">
       <Filter>helper</Filter>
     </ClInclude>
-    <ClInclude Include="helper\mtllib_file.h">
+    <ClInclude Include="helper\mtlb_file.h">
       <Filter>helper</Filter>
+    </ClInclude>
+    <ClInclude Include="mesh\material_lib.h">
+      <Filter>mesh</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -111,6 +111,9 @@
       <Filter>entities</Filter>
     </ClCompile>
     <ClCompile Include="mesh\static_object.cpp">
+      <Filter>mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="mesh\material_lib.cpp">
       <Filter>mesh</Filter>
     </ClCompile>
   </ItemGroup>

@@ -15,7 +15,7 @@ const int kORIGIN_OBJ_NAME_SIZE = 30;
 
 struct GLB_FileHeader
 {
-    char _origin_obj_name[kORIGIN_OBJ_NAME_SIZE]; // Original obj filename.
+    char _origin_name[kORIGIN_OBJ_NAME_SIZE];     // Original group filename.
     int  _num_vertices;                           // Number of vertices for VBO construction.
     int  _num_elements;                           // Number of elements for EAB construction.
     int  _vertex_format[4];                       // 3 3 2 0 (vtx, norm, uv, no tangent). 

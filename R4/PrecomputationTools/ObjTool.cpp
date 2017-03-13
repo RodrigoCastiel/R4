@@ -54,6 +54,12 @@ void ObjTool::OnLoadObj()
         return;
     }
 
+    ui->objInfo->clear();
+    std::string log_output;
+    mObjData.LogData(log_output);
+    ui->objInfo->append(QString::fromStdString(log_output));
+    mObjData.LogData();
+
     // Update UI data.
     ui->label_Status->setText(filePath);
     ui->lineEditNumVertices->setText(QString::number(mObjData.GetNumVertices()));
@@ -61,8 +67,8 @@ void ObjTool::OnLoadObj()
     ui->lineEditNumUVs->setText(QString::number(mObjData.GetNumUVs()));
     ui->lineEditNumGroups->setText(QString::number(mObjData.GetNumGroups()));
     ui->lineEditNumFaces->setText(QString::number(mObjData.GetNumFaces()));
-    ui->lineEditNumObjs->setText("???");
-    ui->lineEditMTL->setText("???");
+    ui->lineEditNumObjs->setText(QString::number(mObjData.GetNumObjs()));
+    ui->lineEditMTL->setText(QString::fromStdString(mObjData.GetMaterialFilename()));
 
     mObjLoaded = true;
 }
@@ -78,21 +84,20 @@ void ObjTool::OnGenerateGLB()
     } 
 
     mObjData.TriangulateQuads();
+    mObjData.MoveCenterToOrigin();
 
-    for (int i = 0; i < mObjData.GetNumGroups(); i++)
+    // Export to r4o.
+    QString objFilepath = ui->label_Status->text();
+    QFileInfo objFileInfo(objFilepath);
+    QString baseFolderPath = objFileInfo.absolutePath();
+    QString groupsFolderPath = objFilepath.mid(0, objFilepath.size()-4);
+    QString groupsFolderName = objFileInfo.fileName().mid(0, objFileInfo.fileName().size()-4);
+    
+    if (!QDir(groupsFolderPath).exists())
     {
-        bool smooth_shading = (ui->cb_SmoothLighting->checkState() == Qt::Checked);
-        QString objFilename = ui->label_Status->text(); // .obj
-        QString folderName = objFilename.mid(0, objFilename.size()-4);
-        QString name =  folderName + "/g" + QString::number(i) + ".glb";
-
-        if (!QDir(folderName).exists())
-        {
-            QDir().mkpath(folderName);
-        }
-
-        mObjData.ExportToMeshGroupGLB(i, smooth_shading, name);
+        QDir().mkpath(groupsFolderPath);
     }
+    mObjData.ExportToR4O(baseFolderPath, groupsFolderName);
 }
 
 void ObjTool::OnGenerateBBH()

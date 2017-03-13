@@ -17,8 +17,8 @@
 #include "camera/camera.h"
 #include "entities/light.h"
 
-#include "mesh/material.h"
 #include "mesh/mesh_group.h"
+#include "mesh/material_lib.h"
 
 namespace engine 
 {

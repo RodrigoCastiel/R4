@@ -12,8 +12,8 @@
 
 #include "core/gl_core.h"
 
-#include "mesh/material.h"
 #include "mesh/mesh_group.h"
+#include "mesh/material_lib.h"
 
 namespace engine
 {

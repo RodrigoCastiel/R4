@@ -33,7 +33,7 @@ MeshGroup::~MeshGroup()
 
 void MeshGroup::Render(unsigned renderingPass) const
 {
-  assert((renderingPass >= 0) && (renderingPass < mVaoList.size()));
+  /*assert((renderingPass >= 0) && (renderingPass < mVaoList.size()));*/
 
   const int option = renderingPass;
   
@@ -248,7 +248,7 @@ void MeshGroup::BuildVAO(const std::vector<std::pair<GLint, bool>> & attribList)
   }
 }
 
-bool MeshGroup::Load(const std::string & glbFilename)
+bool MeshGroup::LoadGLB(const std::string & glbFilename)
 {
     // Read GLB file =========================================================
     const char* filename = glbFilename.c_str();

@@ -1,6 +1,7 @@
 #include "render_engine.h"
 
 #include <QImage>
+#include "mesh/material_lib.h"
 
 namespace engine
 {
@@ -77,8 +78,14 @@ bool RenderEngine::Load()
     terrainChunk->Load();*/
 
     testMesh = new MeshGroup();
-    testMesh->Load("Peugeot_207_g12.glb");
-    testMesh->AddRenderingPass({ {phong_posAttr, true}, {phong_norAttr, true}, {phong_texAttr, true} });
+    //testMesh->LoadGLB("Peugeot_207_g12.glb");
+    testMesh->LoadGLB("g0.glb");
+
+    MaterialLib lib;
+    lib.LoadMTLB("array_house.mtlb", "");
+
+    //testMesh->AddRenderingPass({ {phong_posAttr, true}, {phong_norAttr, true}, {phong_texAttr, true} });
+    testMesh->AddRenderingPass({ {phong_posAttr, true}, {phong_norAttr, true} });
 
     return true;
 }
@@ -131,7 +138,7 @@ void RenderEngine::Render(Camera* camera)
     mPhongRenderer->DisableColorMap();
     mPhongRenderer->DisableNormalMap();
     model.setToIdentity();
-    model.scale(1e-3);
+    model.scale(1e-2);
     mPhongRenderer->SetModelMatrix(model);
     testMesh->Render();
     mPhongRenderer->EnableColorMap();

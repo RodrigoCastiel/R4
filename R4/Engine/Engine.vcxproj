@@ -17,6 +17,7 @@
     <ClCompile Include="core\gl_core.cpp" />
     <ClCompile Include="entities\terrain_chunk.cpp" />
     <ClCompile Include="helper\useful_meshes.cpp" />
+    <ClCompile Include="mesh\material_lib.cpp" />
     <ClCompile Include="mesh\mesh_group.cpp" />
     <ClCompile Include="mesh\static_object.cpp" />
     <ClCompile Include="renderer\debug_renderer.cpp" />
@@ -32,10 +33,10 @@
     <ClInclude Include="entities\light.h" />
     <ClInclude Include="entities\terrain_chunk.h" />
     <ClInclude Include="helper\glb_file.h" />
-    <ClInclude Include="helper\mtllib_file.h" />
+    <ClInclude Include="helper\mtlb_file.h" />
     <ClInclude Include="helper\useful_meshes.h" />
     <ClInclude Include="interaction\mouse_state.h" />
-    <ClInclude Include="mesh\material.h" />
+    <ClInclude Include="mesh\material_lib.h" />
     <ClInclude Include="mesh\mesh_group.h" />
     <ClInclude Include="mesh\static_object.h" />
     <ClInclude Include="renderer\debug_renderer.h" />

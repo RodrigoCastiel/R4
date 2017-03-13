@@ -52,7 +52,7 @@ public:
     // Loads VBO and EAB from binary file.
     // '.glb' => graphics library buffer binary file.
     // Automatically sets vertex attribute list.
-    bool Load(const std::string & glbFilename = "default.glb");
+    bool LoadGLB(const std::string & glbFilename = "default.glb");
 
     // TODO: document.
     bool Update(const GLfloat* buffer);
