@@ -2,6 +2,7 @@
 
 #include <QImage>
 #include "mesh/material_lib.h"
+#include "helper/r4o_file.h"
 
 namespace engine
 {
@@ -83,6 +84,10 @@ bool RenderEngine::Load()
 
     MaterialLib lib;
     lib.LoadMTLB("array_house.mtlb", "");
+
+    R4OFile r4oFile;
+    //r4oFile.Load("TIE-fighter.r4o");
+    r4oFile.Load("array_house.r4o");
 
     //testMesh->AddRenderingPass({ {phong_posAttr, true}, {phong_norAttr, true}, {phong_texAttr, true} });
     testMesh->AddRenderingPass({ {phong_posAttr, true}, {phong_norAttr, true} });

@@ -16,6 +16,7 @@
     <ClCompile Include="core\game_engine.cpp" />
     <ClCompile Include="core\gl_core.cpp" />
     <ClCompile Include="entities\terrain_chunk.cpp" />
+    <ClCompile Include="helper\r4o_file.cpp" />
     <ClCompile Include="helper\useful_meshes.cpp" />
     <ClCompile Include="mesh\material_lib.cpp" />
     <ClCompile Include="mesh\mesh_group.cpp" />
@@ -34,6 +35,7 @@
     <ClInclude Include="entities\terrain_chunk.h" />
     <ClInclude Include="helper\glb_file.h" />
     <ClInclude Include="helper\mtlb_file.h" />
+    <ClInclude Include="helper\r4o_file.h" />
     <ClInclude Include="helper\useful_meshes.h" />
     <ClInclude Include="interaction\mouse_state.h" />
     <ClInclude Include="mesh\material_lib.h" />

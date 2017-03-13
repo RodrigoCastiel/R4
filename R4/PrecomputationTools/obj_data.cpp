@@ -5,6 +5,7 @@
 #include <QVector2D>
 #include <initializer_list>
 
+#include "helper/r4o_file.h"
 #include "helper/glb_file.h"
 #include "helper/mtlb_file.h"
 
@@ -330,60 +331,52 @@ bool ObjData::ExportToMTLB(const QString & mtlbFilename)
 
 bool ObjData::ExportToR4O(const QString & baseFolderPath, const QString & groupsFolderName)
 {
-    QString r4oFilepath = baseFolderPath + "/" + groupsFolderName + ".r4o";
-
     // Compute flat and smooth normals if necessary.
     bool hasNormals = (mNormals.size() > 0);
     if (mNormals.size() == 0)
         ObjData::ComputeVertexNormals(true);
     ObjData::ComputeFaceNormals(true);
 
-    // Open r4o filename.
-    std::string filename = r4oFilepath.toStdString();
-    FILE* r4oFile = fopen(filename.c_str(), "w");
+    QString r4oFilepath = baseFolderPath + "/" + groupsFolderName + ".r4o";
+    QString mtlbFileName = baseFolderPath + "/" + QString::fromStdString(mMaterialFilename) + "b";
 
-    if (r4oFile == nullptr)
-    {
-        std::cerr << "ERROR Couldn't open file at \'" << filename << "\'" << std::endl;
-        return false;
-    }
-
-    // Export groups. TODO: in parallel.
+    // Export groups.
     for (int i = 0; i < mGroups.size(); i++) 
     {
         ObjData::ExportToMeshGroupGLB(baseFolderPath + "/" + groupsFolderName + 
-                                      "/g" + QString::number(i) + ".glb", i, false);
+            "/g" + QString::number(i) + ".glb", i, false);
     }
 
-    // Write list of objects and groups.
-    fprintf(r4oFile, "%u %u\n", mObjList.size(), mGroups.size());
+    // Export to mtlb.
+    QString mtlbFilePath = baseFolderPath + "/" + QString::fromStdString(mMaterialFilename) + "b";
+    std::string materialFilename = mMaterialFilename;
+    if (!ObjData::ExportToMTLB(mtlbFilePath))
+    {
+        std::cerr << "ERROR Couldn't export to MTLB at \'" << mtlbFilePath.toStdString() << "\'" << std::endl;
+        materialFilename  = "<ERROR-MTLB>";
+    }
+
+    // Prepare r4o file.
+    R4OFile r4oFile;
+    r4oFile.MTLBFileName() = mMaterialFilename + "b";
+    r4oFile.GroupsBaseFolder() = groupsFolderName.toStdString();
+    r4oFile.GetNumGroups() = mGroups.size();
 
     // Build a list for counting obj's children.
     std::vector<int> objs(mObjList.size(), 0);
     for (int i = 0; i < mGroups.size(); i++)
         objs[mGroups[i].mObjIndex]++;
-
     int group = 0;
     for (int i = 0; i < mObjList.size(); i++)
     {
-        fprintf(r4oFile, "%s\n", mObjList[i].mName.c_str());
-        fprintf(r4oFile, "%d %d %d\n", i, group, group+objs[i]-1);
+        r4oFile.ObjNames().push_back(mObjList[i].mName.c_str());
+        r4oFile.ObjGroupIntervals().push_back({group, group+objs[i]-1});
         group += objs[i];
     }
 
-    // Export to mtlb.
-    QString mtlbFilePath = baseFolderPath + "/" + QString::fromStdString(mMaterialFilename) + "b";
-    if (!ObjData::ExportToMTLB(mtlbFilePath))
-    {
-        std::cerr << "ERROR Couldn't export to MTLB at \'" << mtlbFilePath.toStdString() << "\'" << std::endl;
-        mtlbFilePath = "<ERROR-MTLB>";
-    }
-
-    // Write compact mtl filename.
-    fprintf(r4oFile, "%sb\n", mMaterialFilename.c_str());
-
-    // Close.
-    fclose(r4oFile);
+    // Write .r4o.
+    if (!r4oFile.Write(r4oFilepath.toStdString()))
+        return false;
     
     return true;
 }

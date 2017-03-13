@@ -34,13 +34,13 @@ bool MaterialLib::LoadMTLB(const std::string & filePath, const std::string & fol
 
     // Read header.
     MTLB_Header header;
+    QOpenGLTexture* textureList[5];
+
     fread(&header, sizeof(MTLB_Header), 1, mtlbFile);
     mFilename = std::string(header._mtl_name);
 
     mMaterialList.clear();
     mMaterialList.resize(header._num_materials);
-
-    QOpenGLTexture* textureList[5];
 
     // Read materials.
     for (int i = 0; i < mMaterialList.size(); i++)
@@ -70,21 +70,23 @@ bool MaterialLib::LoadMTLB(const std::string & filePath, const std::string & fol
         // Read textures.
         for (int j = 0; j < material_header._num_textures; j++)
         {
-            textureList[j] = nullptr;
-
             int length = 0;
             fread(&length, sizeof(int), 1, mtlbFile);
             fread(buffer, sizeof(char)*length, 1, mtlbFile);
             buffer[length] = '\0';
 
+            textureList[j] = nullptr;
             if (length > 0)
             {
-                buffer[length] = '\0';
+                QString folder;
+                if (folderPath == "")
+                    folder = ".";
                 QString imgPath = QString::fromStdString(folderPath) + "/" + QString(buffer);
-                textureList[j] = new QOpenGLTexture(QImage(imgPath).mirrored());
+                QImage img = QImage(imgPath).mirrored();
 
-                if (textureList[j])
+                if (!img.isNull())
                 {
+                    textureList[j] = new QOpenGLTexture(img);
                     textureList[j]->setMinificationFilter(QOpenGLTexture::LinearMipMapLinear);
                     textureList[j]->setMagnificationFilter(QOpenGLTexture::Linear);
                 }

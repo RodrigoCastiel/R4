@@ -78,6 +78,9 @@
     <ClInclude Include="mesh\material_lib.h">
       <Filter>mesh</Filter>
     </ClInclude>
+    <ClInclude Include="helper\r4o_file.h">
+      <Filter>helper</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="core\gl_core.cpp">
@@ -115,6 +118,9 @@
     </ClCompile>
     <ClCompile Include="mesh\material_lib.cpp">
       <Filter>mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="helper\r4o_file.cpp">
+      <Filter>helper</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
