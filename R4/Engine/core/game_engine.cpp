@@ -10,7 +10,7 @@ GameEngine::GameEngine()
 
     // XXX.
     camera = new TrackballCamera();
-    camera->SetDistanceToTarget(4.0f);
+    camera->SetDistanceToTarget(500.0f);
 
 }
 

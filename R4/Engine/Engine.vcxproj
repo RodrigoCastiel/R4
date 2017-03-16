@@ -27,6 +27,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera\camera.h" />
+    <ClInclude Include="camera\fpv_camera.h" />
     <ClInclude Include="camera\projection_parameters.h" />
     <ClInclude Include="camera\trackball_camera.h" />
     <ClInclude Include="core\game_engine.h" />

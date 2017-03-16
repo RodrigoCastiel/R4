@@ -22,7 +22,6 @@ struct LightUniformPack
     GLint mDirLoc;    // Location of vec3 direction.
     GLint mLdLoc;     // Location of diffuse component.
     GLint mLsLoc;     // Location of specular component.
-    GLint mAlphaLoc;  // Location of alpha component.
     GLint mIsSpotlightLoc;    // Location of flag 'is_spotlight'.
     GLint mSpotlightAngleLoc; // Location of spotlight angle uniform.
 };
@@ -36,7 +35,6 @@ struct LightSource
     // Phong illumination model data.
     QVector3D mLd;  // Diffuse component.
     QVector3D mLs;  // Specular component.
-    GLfloat mAlpha; // Shininess.
 
     bool mIsSpotlight;          // Tells if it's a spotlight.
     GLfloat mSpotlightAngle;    // Spotlight cone angle.
@@ -47,7 +45,6 @@ struct LightSource
 
     void SetDiffuse(  const QVector3D & diff) { mLd = diff; }
     void SetSpecular( const QVector3D & spec) { mLs = spec; }
-    void SetShininess(float shininess) { mAlpha = shininess; }
 
     void SetSpotlight(bool is_spotlight) { mIsSpotlight = is_spotlight; }
     void SetSpotlightAngle(float spotlight_angle) { mSpotlightAngle = spotlight_angle; }

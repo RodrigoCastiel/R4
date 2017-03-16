@@ -252,6 +252,9 @@ TexturedQuadMesh::TexturedQuadMesh(GLint posAttr, GLint norAttr, GLint uvAttr, G
     mMaterial.mKa = { 0.1f, 0.1f, 0.1f };
     mMaterial.mKd = { 0.8f, 0.8f, 0.8f };
     mMaterial.mKs = { 0.2f, 0.2f, 0.2f };
+    mMaterial.mIllum = 2;
+    mMaterial.mOpacity = 1.0f;
+    mMaterial.mShininess = 1.0f;
 }
 
 TexturedQuadMesh::~TexturedQuadMesh()

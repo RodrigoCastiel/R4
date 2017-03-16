@@ -23,6 +23,7 @@ public:
         : mVertexList(vertexList)
         , mNormal({.0f, .0f, .0f})
         , mSmoothShading(false)
+        , mMaterialIndex(0)
     { }
 
     void PushVertex(int v=0, int vt=0, int vn=0, int vtan=0)
@@ -35,7 +36,7 @@ public:
         mVertexList.pop_back();
     }
 
-    inline int GetNumVertices() const { return mVertexList.size(); }
+    int GetNumVertices() const { return mVertexList.size(); }
 
     const std::vector<int> & operator[](int index) const { return mVertexList[index]; }
     std::vector<int> & operator[](int index) { return mVertexList[index]; }
@@ -46,10 +47,16 @@ public:
     bool UsesSmoothShading() const { return mSmoothShading; }
     void SetSmoothShading(bool smoothShading) { mSmoothShading = smoothShading; }
     
+    int GetMaterialIndex() const { return mMaterialIndex; }
+    void SetMaterialIndex(int materialIndex) { mMaterialIndex = materialIndex; }
+
+    void SetVertexList(const std::vector<std::vector<int>> & vertexList) { mVertexList = vertexList; }
+
 private:
     std::vector<std::vector<int>> mVertexList;
     QVector3D mNormal;
     bool mSmoothShading;
+    int mMaterialIndex;
 };
 
 

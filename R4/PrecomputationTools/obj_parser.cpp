@@ -163,7 +163,7 @@ bool ObjParser::ParseFace(const std::string & lineData, Face & face, bool verbos
             // Index is provided.
             if (subcomponents[j].size() > 0)
             {
-                face[vtxNumber][j] = coord-1;
+                face[vtxNumber][j] = coord > 0 ? coord-1 : coord;
             }
         }
 
@@ -308,8 +308,11 @@ bool ObjParser::LoadObj(const std::string & path, std::string & objname,
     std::string filename = path + "/" + objname;
     std::ifstream objFile(filename);
     std::string line;
+    
+    // Obj state.
     int lineNumber = 0;
     bool smooth = false;
+    int currentMaterialIndex = 0;
 
     if (!objFile.is_open())
     {
@@ -418,6 +421,8 @@ bool ObjParser::LoadObj(const std::string & path, std::string & objname,
                 }
 
                 face.SetSmoothShading(smooth);
+                face.SetMaterialIndex(currentMaterialIndex);
+
                 objMesh.AddFace(face);
             }
             else if (lineID == atomic::MTLLIB)
@@ -431,7 +436,7 @@ bool ObjParser::LoadObj(const std::string & path, std::string & objname,
                     {
                         std::cerr << "ERROR Couldn't load mtllib." << std::endl;
                         std::cerr << "\t^ at line " << lineNumber << " ('" << filename << "')" << std::endl;
-                        std::cerr << lineNumber << ": '" << line << "'\n";  
+                        std::cerr << lineNumber << ": '" << line << "'\n";
                     }
                     return false;
                 }
@@ -472,6 +477,11 @@ bool ObjParser::LoadObj(const std::string & path, std::string & objname,
                 }
 
                 objMesh.SetMaterialIndexForCurrentGroup(index);
+                
+                if (index != currentMaterialIndex)
+                    printf("#line = %d, \tcurrentMaterial = %d,\tface = %d,\t#of group = %d,\tgroup = %d\n", lineNumber, index, objMesh.GetNumFaces(), objMesh.GetNumFacesOnGroup(objMesh.GetNumGroups()-1), objMesh.GetNumGroups()-1);
+                
+                currentMaterialIndex = index;  // Update current material index.
             }
 
             // Ignore comments and other kinds of line.

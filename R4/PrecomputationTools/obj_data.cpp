@@ -78,10 +78,32 @@ void ObjData::LogData(std::string & output) const
     for (auto & group : mGroups)
     {
         text.append("\t" + group.mName + " --> '" + mObjList[group.mObjIndex].mName 
-                         + "'; " + mMaterialLib[group.mMaterialIndex].mName + "\n");
+                         + "'; \n");
     }
 
     output = text;
+}
+
+void ObjData::AddFace(const Face & face)
+{
+    mGroups.back().mFaces.push_back(face);
+
+    int numVertices = mVertices.size();
+    int numTextures = mUVs.size();
+    int numNormals = mNormals.size();
+
+    auto & vtxs = mGroups.back().mFaces.back();
+    for (int i = 0; i < face.GetNumVertices(); i++) 
+    {
+        if (vtxs[i][0] < 0)
+            vtxs[i][0] = numVertices + vtxs[i][0];
+
+        if (vtxs[i][1] < 0)
+            vtxs[i][1] = numTextures + vtxs[i][1];
+
+        if (vtxs[i][2] < 0)
+            vtxs[i][2] = numNormals + vtxs[i][2];
+    }
 }
 
 void ObjData::AddGroup(const std::string & name)
@@ -130,7 +152,7 @@ void ObjData::AddObj(const std::string & name)
     }
 }
 
-bool ObjData::ExportToMeshGroupGLB(const QString & glbFilename, int groupIndex, bool smoothShading)
+bool ObjData::ExportToMeshGroupGLB(const QString & glbFilename, int groupIndex, int forceNormals)
 {
     if ((groupIndex < 0) && (groupIndex > mGroups.size())) 
     {
@@ -194,19 +216,35 @@ bool ObjData::ExportToMeshGroupGLB(const QString & glbFilename, int groupIndex, 
             int  uv_index = objGroup.mFaces[i][vtx][1];
             int nor_index = objGroup.mFaces[i][vtx][2];
 
-            if (objGroup.mFaces[i].UsesSmoothShading())
+            if (forceNormals == 1)  // Force to be smooth.
             {
                 buffer.push_back(mNormals[nor_index].x());
                 buffer.push_back(mNormals[nor_index].y());
                 buffer.push_back(mNormals[nor_index].z());  
             }
-            else  // Flat shading: use face normals.
+            else if (forceNormals == 2)  // Force to be flat.
             {
                 QVector3D n = objGroup.mFaces[i].GetNormal();
                 buffer.push_back(n.x());
                 buffer.push_back(n.y());
                 buffer.push_back(n.z()); 
             }
+            else
+            {
+                if (objGroup.mFaces[i].UsesSmoothShading())
+                {
+                    buffer.push_back(mNormals[nor_index].x());
+                    buffer.push_back(mNormals[nor_index].y());
+                    buffer.push_back(mNormals[nor_index].z());  
+                }
+                else  // Flat shading: use face normals.
+                {
+                    QVector3D n = objGroup.mFaces[i].GetNormal();
+                    buffer.push_back(n.x());
+                    buffer.push_back(n.y());
+                    buffer.push_back(n.z()); 
+                }
+            }   
         }
     }
 
@@ -271,6 +309,31 @@ bool ObjData::ExportToMeshGroupGLB(const QString & glbFilename, int groupIndex, 
     // Write it.
     fwrite(&header, sizeof(GLB_FileHeader), 1, glbFile);
     fwrite(buffer.data(), sizeof(GLfloat)*bufferSize, 1, glbFile);
+
+    // Prepare list of material subgroups.
+    std::vector<std::pair<int, int>> materialSubGroupList;
+
+    if (objGroup.mFaces.size() > 0)
+        materialSubGroupList.emplace_back(0, objGroup.mFaces[0].GetMaterialIndex());
+
+    for (int i = 1; i < objGroup.mFaces.size(); i++) 
+    {
+        // If material has changed, specify the corresponding face and new material index.
+        if (objGroup.mFaces[i].GetMaterialIndex() != objGroup.mFaces[i-1].GetMaterialIndex())
+            materialSubGroupList.emplace_back(i, objGroup.mFaces[i].GetMaterialIndex());
+    }
+
+    // Write list of materials at the end.
+    int numMaterialSubGroups = materialSubGroupList.size();
+    fwrite(&numMaterialSubGroups, sizeof(int), 1, glbFile);
+    for (auto & subgroup : materialSubGroupList)
+    {
+        int startFace = subgroup.first;
+        int materialIndex = subgroup.second;
+        fwrite(&startFace, sizeof(int), 1, glbFile);
+        fwrite(&materialIndex, sizeof(int), 1, glbFile);
+    }
+
     fclose(glbFile);
 
     return true;
@@ -329,7 +392,8 @@ bool ObjData::ExportToMTLB(const QString & mtlbFilename)
     return true;
 }
 
-bool ObjData::ExportToR4O(const QString & baseFolderPath, const QString & groupsFolderName)
+bool ObjData::ExportToR4O(const QString & baseFolderPath, const QString & groupsFolderName, 
+                          int forceNormals)
 {
     // Compute flat and smooth normals if necessary.
     bool hasNormals = (mNormals.size() > 0);
@@ -344,7 +408,7 @@ bool ObjData::ExportToR4O(const QString & baseFolderPath, const QString & groups
     for (int i = 0; i < mGroups.size(); i++) 
     {
         ObjData::ExportToMeshGroupGLB(baseFolderPath + "/" + groupsFolderName + 
-            "/g" + QString::number(i) + ".glb", i, false);
+            "/g" + QString::number(i) + ".glb", i, forceNormals);
     }
 
     // Export to mtlb.
@@ -385,6 +449,9 @@ void ObjData::TriangulateQuads()
 {
     for (auto & group : mGroups)
     {
+        // Optimize memory allocation according to the worst case.
+        group.mFaces.reserve(group.mFaces.size() * 2);
+
         size_t originalNumFaces = group.mFaces.size();
         for (int i = 0; i < originalNumFaces; i++)
         {
@@ -399,7 +466,10 @@ void ObjData::TriangulateQuads()
                 std::vector<int> & vtx2 = group.mFaces[i][2];
                 std::vector<int> & vtx1 = group.mFaces[i][0];
 
-                group.mFaces.push_back({vtx1, vtx2, vtx3});
+                Face newFace = group.mFaces[i];
+                newFace.SetVertexList({vtx1, vtx2, vtx3 });
+                //group.mFaces.push_back(newFace);
+                group.mFaces.insert(group.mFaces.begin()+i+1, newFace);
             }
         }
     }
@@ -457,7 +527,6 @@ void ObjData::ComputeVertexNormals(bool normalize)
                     face[vtx][2] = i;
             }
         }
-
     }
 }
 

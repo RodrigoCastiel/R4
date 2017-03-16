@@ -81,6 +81,9 @@
     <ClInclude Include="helper\r4o_file.h">
       <Filter>helper</Filter>
     </ClInclude>
+    <ClInclude Include="camera\fpv_camera.h">
+      <Filter>camera</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="core\gl_core.cpp">

@@ -13,6 +13,12 @@ namespace engine
 
 const int kORIGIN_OBJ_NAME_SIZE = 30;
 
+// Number of attributes (format):
+//         0     1   2   3
+// -> 2:  pos, norm;
+// -> 3:  pos, norm, uv;
+// -> 4:  pos, norm, uv, tan;
+
 struct GLB_FileHeader
 {
     char _origin_name[kORIGIN_OBJ_NAME_SIZE];     // Original group filename.

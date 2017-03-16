@@ -14,6 +14,7 @@
 #include "camera/camera.h"
 #include "helper/useful_meshes.h"
 #include "entities/terrain_chunk.h"
+#include "mesh/static_object.h"
 
 #include "debug_renderer.h"
 #include "phong_renderer.h"
@@ -53,11 +54,8 @@ private:
     AxisMesh* mOriginAxis;
 
     // XXX.
-    //TerrainChunk* terrainChunk;
-    TexturedQuadMesh* mTexturedQuad;
-    QOpenGLTexture* colorMap;
-    QOpenGLTexture* normalMap;
-    MeshGroup* testMesh;
+    StaticObject* sceneObj;
+    TerrainChunk* terrainChunk;
 };
 
 }  // namespace engine.

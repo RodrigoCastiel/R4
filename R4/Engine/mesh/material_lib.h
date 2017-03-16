@@ -16,13 +16,16 @@
 namespace engine
 {
 
+// Uniform location for shaders with Phong Model.
 struct MaterialUniformPack
 {
     GLint mKaLoc;
     GLint mKdLoc;
     GLint mKsLoc;
 
-    float mShininess { 1.0f };
+    GLint mIllumLoc;
+    GLint mOpacityLoc;
+    GLint mShininessLoc;
 };
 
 struct Material
@@ -53,7 +56,7 @@ public:
 
     // Loads from .mtlb file. 
     // Please provide the full path and also the containing folder.
-    bool LoadMTLB(const std::string & filePath, const std::string & folderPath);
+    bool LoadMTLB(const std::string & filePath, const std::string & containingFolder);
 
     // Returns the number of materials stored in the list.
     inline int GetNumMaterials() const { return mMaterialList.size(); }

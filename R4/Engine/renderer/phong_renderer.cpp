@@ -49,6 +49,9 @@ bool PhongRenderer::Load()
     mMaterialUniform.mKaLoc = mPhongShader->uniformLocation("material.Ka");
     mMaterialUniform.mKdLoc = mPhongShader->uniformLocation("material.Kd");
     mMaterialUniform.mKsLoc = mPhongShader->uniformLocation("material.Ks");
+    mMaterialUniform.mShininessLoc = mPhongShader->uniformLocation("material.alpha");
+    mMaterialUniform.mOpacityLoc   = mPhongShader->uniformLocation("material.opacity");
+    mMaterialUniform.mIllumLoc = mPhongShader->uniformLocation("material.illum");
 
     mUseColorMapUniform  = mPhongShader->uniformLocation("use_color_map");
     mUseNormalMapUniform = mPhongShader->uniformLocation("use_normal_map");
@@ -66,7 +69,6 @@ bool PhongRenderer::Load()
         mLightUniformArray[i].mDirLoc   = mPhongShader->uniformLocation(light_prefix + "dir");
         mLightUniformArray[i].mLdLoc    = mPhongShader->uniformLocation(light_prefix + "Ld");
         mLightUniformArray[i].mLsLoc    = mPhongShader->uniformLocation(light_prefix + "Ls");
-        mLightUniformArray[i].mAlphaLoc = mPhongShader->uniformLocation(light_prefix + "alpha");
         mLightUniformArray[i].mIsSpotlightLoc 
             = mPhongShader->uniformLocation(light_prefix + "is_spotlight");
         mLightUniformArray[i].mSpotlightAngleLoc 
@@ -147,19 +149,18 @@ GLint PhongRenderer::GetUniformLocation(const QString & name, int renderingPass)
   }
 }
 
-void PhongRenderer::SetLightAmbientComponent(const QVector3D & La) const
+void PhongRenderer::SetLightAmbientComponent(const QVector3D & La) 
 {
     mPhongShader->setUniformValue(mLaLoc, La);
 }
 
-void PhongRenderer::SetLightSourceCameraCoordinates(const LightSource & lightSource, int slot) const
+void PhongRenderer::SetLightSourceCameraCoordinates(const LightSource & lightSource, int slot) 
 {
     const LightUniformPack & lightSourceUniform = mLightUniformArray[slot];
 
     mPhongShader->setUniformValue(lightSourceUniform.mPosLoc, lightSource.mPos);  // Position.
     mPhongShader->setUniformValue(lightSourceUniform.mLdLoc,  lightSource.mLd);  // Diffuse component.
     mPhongShader->setUniformValue(lightSourceUniform.mLsLoc,  lightSource.mLs);  // Specular component.
-    mPhongShader->setUniformValue(lightSourceUniform.mAlphaLoc, lightSource.mAlpha);  // Shininess.
     mPhongShader->setUniformValue(lightSourceUniform.mIsSpotlightLoc, (int)lightSource.mIsSpotlight);
 
     // Spotlight attributes:
@@ -177,7 +178,7 @@ void PhongRenderer::SetLightSourceCameraCoordinates(const LightSource & lightSou
 }
 
 void PhongRenderer::SetLightSourceWorldCoordinates(const LightSource & lightSource, 
-                                                      const Camera * camera, int slot) const
+                                                      const Camera * camera, int slot) 
 {
     const LightUniformPack & lightSourceUniform = mLightUniformArray[slot];
 
@@ -193,7 +194,6 @@ void PhongRenderer::SetLightSourceWorldCoordinates(const LightSource & lightSour
     mPhongShader->setUniformValue(lightSourceUniform.mPosLoc, p.toVector3D());   // Position.
     mPhongShader->setUniformValue(lightSourceUniform.mLdLoc,  lightSource.mLd);  // Diffuse component.
     mPhongShader->setUniformValue(lightSourceUniform.mLsLoc,  lightSource.mLs);  // Specular component.
-    mPhongShader->setUniformValue(lightSourceUniform.mAlphaLoc, lightSource.mAlpha);  // Shininess.
     mPhongShader->setUniformValue(lightSourceUniform.mIsSpotlightLoc, (int)lightSource.mIsSpotlight);
 
     // Spotlight attributes:
@@ -210,11 +210,25 @@ void PhongRenderer::SetLightSourceWorldCoordinates(const LightSource & lightSour
     }
 }
 
-void PhongRenderer::SetMaterial(const Material & material) const
+void PhongRenderer::SetMaterial(const Material & material) 
 {
-    mPhongShader->setUniformValue(mMaterialUniform.mKaLoc,  material.mKa);  // Ambient component.
-    mPhongShader->setUniformValue(mMaterialUniform.mKdLoc,  material.mKd);  // Diffuse component.
-    mPhongShader->setUniformValue(mMaterialUniform.mKsLoc,  material.mKs);  // Specular component.
+    mPhongShader->setUniformValue(mMaterialUniform.mKaLoc, material.mKa);  // Ambient component.
+    mPhongShader->setUniformValue(mMaterialUniform.mKdLoc, material.mKd);  // Diffuse component.
+    mPhongShader->setUniformValue(mMaterialUniform.mKsLoc, material.mKs);  // Specular component.
+
+    mPhongShader->setUniformValue(mMaterialUniform.mIllumLoc,     material.mIllum);      // Illumination type.
+    mPhongShader->setUniformValue(mMaterialUniform.mOpacityLoc,   material.mOpacity);    // Opacity.
+    mPhongShader->setUniformValue(mMaterialUniform.mShininessLoc, material.mShininess);  // Alpha.
+
+    if (material.mDiffuseMap)  // If it has a valid diffuse map.
+    {
+        PhongRenderer::EnableColorMap();
+        material.mDiffuseMap->bind(0);
+    }
+    else
+    {
+        PhongRenderer::DisableColorMap();
+    }
 }
 
 }  // namespace engine.

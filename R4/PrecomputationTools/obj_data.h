@@ -81,9 +81,9 @@ public:
     // Builds a renderable mesh group from the topology data of ObjMesh.
     // If an invalid groupIndex is passed, returns false.
     // NOTE: assumes that both flat and smooth normals are computed.
-    bool ExportToMeshGroupGLB(const QString & glbFilename, int groupIndex, bool smoothShading=true);
+    bool ExportToMeshGroupGLB(const QString & glbFilename, int groupIndex, int forceNormals);
 
-    bool ExportToR4O(const QString & baseFolderPath, const QString & groupsFolderName);
+    bool ExportToR4O(const QString & baseFolderPath, const QString & groupsFolderName, int forceNormals);
 
     bool ExportToMTLB(const QString & mtlbFilename);
 
@@ -137,12 +137,6 @@ inline
 void ObjData::AddMaterial(const ObjMaterial & material)
 {
     mMaterialLib.push_back(material);
-}
-
-inline
-void ObjData::AddFace(const Face & face)
-{
-    mGroups.back().mFaces.push_back(face);
 }
 
 inline

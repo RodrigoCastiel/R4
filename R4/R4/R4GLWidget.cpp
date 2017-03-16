@@ -20,9 +20,9 @@ R4GLWidget::R4GLWidget(QWidget *parent)
 
     // Init OpenGL context.
     QSurfaceFormat format;
-    format.setDepthBufferSize(32 /* bits */);
+    format.setDepthBufferSize(24 /* bits */);
     format.setVersion(4, 3); // OpenGL 4.3.
-    format.setSamples(16);   // Supersampling factor.
+    format.setSamples(4);   // Supersampling factor.
     format.setProfile(QSurfaceFormat::CoreProfile);
     QSurfaceFormat::setDefaultFormat(format);
     this->setFormat(format);
@@ -33,12 +33,14 @@ R4GLWidget::R4GLWidget(QWidget *parent)
     // Set up timer.
     mGameLoopTimer = new QTimer;
     connect(mGameLoopTimer, SIGNAL(timeout()), this, SLOT(gameLoopIteration()));
-    double FPS = 60.0;
+    double FPS = 90.0;
     int period = static_cast<int>(1000.0/FPS);
     mGameLoopTimer->start(period);
 
     // Build game engine.
     mEngine = new GameEngine();
+
+    mElapsedTimer.start();
 }
 
 R4GLWidget::~R4GLWidget()
@@ -50,10 +52,17 @@ R4GLWidget::~R4GLWidget()
 
 void R4GLWidget::gameLoopIteration()
 {
+    qint64 T = mElapsedTimer.elapsed();
+    double FPS = 1000.0/(T > 0 ? T : 1);
+    //qDebug() << "FPS = " << FPS << "\n";
+    this->setWindowTitle("R4 | " + QString::number(static_cast<int>(FPS)) + " Hz");
+
     // Update game engine.
     mEngine->Update();
 
     QOpenGLWidget::update();
+
+    mElapsedTimer.restart();
 }
 
 void R4GLWidget::initializeGL()

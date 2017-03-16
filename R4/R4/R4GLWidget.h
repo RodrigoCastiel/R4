@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QSet>
+#include <QElapsedTimer>
 #include <QOpenGLWidget>
 namespace Ui { class R4GLWidget; };
 
@@ -41,6 +42,8 @@ private:
     QSet<int> mPressedKeys;
     engine::GameEngine* mEngine;
     engine::MouseState mMouseState;
+
+    QElapsedTimer mElapsedTimer;
 
     Ui::R4GLWidget *ui;
 };

@@ -198,19 +198,6 @@
           </property>
          </widget>
         </item>
-        <item row="0" column="0">
-         <spacer name="horizontalSpacer">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
         <item row="0" column="1">
          <widget class="QCheckBox" name="cb_SmoothLighting">
           <property name="text">
@@ -218,17 +205,24 @@
           </property>
          </widget>
         </item>
-        <item row="0" column="2">
-         <widget class="QPushButton" name="pb_GenerateGLB">
-          <property name="text">
-           <string>Generate GLB file set</string>
-          </property>
-         </widget>
-        </item>
         <item row="1" column="1">
          <widget class="QLabel" name="label_Status">
           <property name="text">
            <string>Not loaded...</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="0">
+         <widget class="QCheckBox" name="cb_TranslateOrigin">
+          <property name="text">
+           <string>Translate Center to Origin</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="2">
+         <widget class="QPushButton" name="pb_GenerateGLB">
+          <property name="text">
+           <string>Generate GLB file set</string>
           </property>
          </widget>
         </item>

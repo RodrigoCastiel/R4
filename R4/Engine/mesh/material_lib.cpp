@@ -1,7 +1,8 @@
 #include "material_lib.h"
 
-#include <cassert>
 #include <cstdio>
+#include <cassert>
+#include <iostream>
 
 #include "helper/mtlb_file.h"
 
@@ -24,7 +25,7 @@ MaterialLib::~MaterialLib()
     }
 }
 
-bool MaterialLib::LoadMTLB(const std::string & filePath, const std::string & folderPath)
+bool MaterialLib::LoadMTLB(const std::string & filePath, const std::string & containingFolder)
 {
     const char* filename = filePath.c_str();
     FILE* mtlbFile = fopen(filename, "rb");
@@ -78,10 +79,10 @@ bool MaterialLib::LoadMTLB(const std::string & filePath, const std::string & fol
             textureList[j] = nullptr;
             if (length > 0)
             {
-                QString folder;
-                if (folderPath == "")
+                QString folder = QString::fromStdString(containingFolder);
+                if (folder == "")
                     folder = ".";
-                QString imgPath = QString::fromStdString(folderPath) + "/" + QString(buffer);
+                QString imgPath = folder + "/" + QString(buffer);
                 QImage img = QImage(imgPath).mirrored();
 
                 if (!img.isNull())
@@ -89,6 +90,10 @@ bool MaterialLib::LoadMTLB(const std::string & filePath, const std::string & fol
                     textureList[j] = new QOpenGLTexture(img);
                     textureList[j]->setMinificationFilter(QOpenGLTexture::LinearMipMapLinear);
                     textureList[j]->setMagnificationFilter(QOpenGLTexture::Linear);
+                }
+                else
+                {
+                    std::cerr << "WARNING Texture not loaded ('" << imgPath.toStdString() << "')\n";
                 }
             }
         }

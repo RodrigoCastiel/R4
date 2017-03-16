@@ -8,6 +8,7 @@
 
 #pragma once
 
+#include <QImage>
 #include <QOpenGLTexture>
 
 #include "core/gl_core.h" 
@@ -23,72 +24,75 @@ class TerrainChunk
 {
 public:
     // +++ Constructors +++ ---------------------------------------------------
-    TerrainChunk(int resX, int resZ, float scale = 1.0f);
+    TerrainChunk(float scale = 3.0f, float height_scale = 200.0f);
     ~TerrainChunk();
 
     // +++ Initialization +++ -------------------------------------------------
     
     // Builds up all geometry.
-    bool Load();
+    bool Load(const std::string & heightmapPath, const std::string & texture1Path);
 
     void UpdateMesh();
 
+    // +++ Rendering +++ ------------------------------------------------------
+
+    void Render(class PhongRenderer* renderer) const;
+
     // +++ Getters/Setters +++ ------------------------------------------------
-
-    // Sets main texture. It will not own it.
-    void SetTexture(QOpenGLTexture* texture) { mTexture = texture; }
-
-    // Sets all attributes for main rendering shaders.
-    void SetMainRendererAttribList(GLint posAttr, GLint normAttr, GLint uvAttr);
 
     MeshGroup* GetMeshGroup() { return mTerrainMesh; }
     const Material & GetMaterial() { return mMaterial; }
-    QOpenGLTexture* GetTexture() { return mTexture; }
+    
+    QOpenGLTexture* GetTexture(int index) { return mTextureList[index]; }
+    int GetNumTextures() const { return mTextureList.size(); }
 
-    float* PositionAt(int i_x, int j_z);
-    float* NormalAt(int i_x, int j_z);
-    float* UvAt(int i_x, int j_z);
+    float* PositionAt(int u, int v);
+    float* NormalAt(int u, int v);
+    float* UvAt(int u, int v);
+    //float* TangentAt(int u, int v);
 
 private:
     // Terrain geometry.
-    int mResolutionX;   // Number of vertices along x.
-    int mResolutionZ;   // Number of vertices along z.
-    float mScale;       // Scale of a single tile.
+    //int mResolutionX;   // Number of vertices along x.
+    //int mResolutionZ;   // Number of vertices along z.
+    float mScale;         // Scale of a single tile.
+    float mHeightScale;   // Scale of y-axis.
     
     std::vector<float> mPositions;  // Vertex positions.
     std::vector<float> mNormals;    // Vertex normals.
     std::vector<float> mUVs;        // Vertex UV coordinates.
+    // std::vector<float> mTangents;  // Vertex tangents.
     std::vector<GLuint> mIndices;   // Topology elements for GL_TRIANGLE_STRIP.
 
     // Renderable mesh.
     MeshGroup* mTerrainMesh;
-    GLint mMainRendererAttribList[4];   // Attribute list for main renderer.
-    GLint mDepthRendererAttribList[4];  // Attribute list for depth renderer.
-
     Material mMaterial;
 
-    // Main texture.
-    QOpenGLTexture* mTexture;
+    QImage mHeightmap;                          // Heightmap image.
+    std::vector<QOpenGLTexture*> mTextureList;  // Set of textures.
 };
 
 // === INLINE METHODS ===
 
 inline
-float* TerrainChunk::PositionAt(int i_x, int j_z)
+float* TerrainChunk::PositionAt(int u, int v)
 {
-    return &mPositions[3*(mResolutionX*j_z + i_x)];
+    const int w = mHeightmap.size().width();
+    return &mPositions[3*(w*v + u)];
 }
 
 inline
-float* TerrainChunk::NormalAt(int i_x, int j_z)
+float* TerrainChunk::NormalAt(int u, int v)
 {
-    return &mNormals[3*(mResolutionX*j_z + i_x)];
+    const int w = mHeightmap.size().width();
+    return &mNormals[3*(w*v + u)];
 }
 
 inline
-float* TerrainChunk::UvAt(int i_x, int j_z)
+float* TerrainChunk::UvAt(int u, int v)
 {
-    return &mUVs[2*(mResolutionX*j_z + i_x)];
+    const int w = mHeightmap.size().width();
+    return &mUVs[2*(w*v + u)];
 }
 
 

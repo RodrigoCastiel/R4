@@ -84,7 +84,10 @@ void ObjTool::OnGenerateGLB()
     } 
 
     mObjData.TriangulateQuads();
-    mObjData.MoveCenterToOrigin();
+    
+
+    if (ui->cb_TranslateOrigin->isChecked())
+        mObjData.MoveCenterToOrigin();
 
     // Export to r4o.
     QString objFilepath = ui->label_Status->text();
@@ -97,7 +100,9 @@ void ObjTool::OnGenerateGLB()
     {
         QDir().mkpath(groupsFolderPath);
     }
-    mObjData.ExportToR4O(baseFolderPath, groupsFolderName);
+
+    int forceNormals = ui->cb_SmoothLighting->isChecked();
+    mObjData.ExportToR4O(baseFolderPath, groupsFolderName, forceNormals);
 }
 
 void ObjTool::OnGenerateBBH()

@@ -20,7 +20,9 @@ class StaticObject
 {
 public:
     // +++ Constructors/Destructors +++ ---------------------------------------
-    StaticObject();
+    StaticObject() 
+    {}
+    
     ~StaticObject();
 
     // +++ Loading/Setup +++ --------------------------------------------------
@@ -29,15 +31,18 @@ public:
 
     // +++ Main / Rendering +++ -----------------------------------------------
 
+    void Render(class PhongRenderer* renderer) const;
+    //void RenderDepthOnly();
+
     inline std::vector<MeshGroup*> & Groups() { return mGroups; }
     inline const std::vector<MeshGroup*> & Groups() const { return mGroups; }
+
+    inline const MaterialLib & GetMaterialLib() const { return mMaterialLib; }
 
 private:
     // Attributes.
     MaterialLib mMaterialLib;         // MTLLIB.
     std::vector<MeshGroup*> mGroups;  // Mesh groups.
-    //std::vector<int> ;
-    
 };
 
 
