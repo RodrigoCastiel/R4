@@ -16,6 +16,7 @@
 #include "interaction/mouse_state.h"
 
 // XXX.
+#include "camera/fpv_camera.h"
 #include "camera/trackball_camera.h"
 
 namespace engine
@@ -31,12 +32,14 @@ public:
     // +++ Main +++ -----------------------------------------------------------
 
     void Load();
-    void Update();
+    void Update(const MouseState & mouseState, const QSet<int> & pressedKeys);
     void Render();
     void Resize(int w, int h);
 
     // ++ User-Interface +++ --------------------------------------------------
     
+    bool LockMouse() const { return mLockMouseCursor; }
+
     void OnKeyboardPress(const QSet<int> & pressedKeys);
     void OnKeyboardRelease(const QSet<int> & pressedKeys);
 
@@ -52,9 +55,11 @@ public:
     void OnMouseMiddleUp(const MouseState & mouseState);
 
 private:
+    bool mLockMouseCursor;
     RenderEngine* mRenderEngine;
 
     // XXX.
+    FPVCamera* fpvCamera;
     TrackballCamera* camera;
 };
 

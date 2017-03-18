@@ -24,6 +24,8 @@ R4GLWidget::R4GLWidget(QWidget *parent)
     format.setVersion(4, 3); // OpenGL 4.3.
     format.setSamples(4);   // Supersampling factor.
     format.setProfile(QSurfaceFormat::CoreProfile);
+    format.setSwapBehavior(QSurfaceFormat::DoubleBuffer);
+    format.setSwapInterval(1);  // VSync!
     QSurfaceFormat::setDefaultFormat(format);
     this->setFormat(format);
 
@@ -33,14 +35,24 @@ R4GLWidget::R4GLWidget(QWidget *parent)
     // Set up timer.
     mGameLoopTimer = new QTimer;
     connect(mGameLoopTimer, SIGNAL(timeout()), this, SLOT(gameLoopIteration()));
-    double FPS = 90.0;
+    double FPS = 500.0;
     int period = static_cast<int>(1000.0/FPS);
-    mGameLoopTimer->start(period);
+    mGameLoopTimer->setInterval(0);
+    mGameLoopTimer->start();
+    mOverrideMouseLock = false;
+
+    // References:
+    // http://stackoverflow.com/questions/17167194/how-to-make-updategl-realtime-in-qt
+    // http://gamedev.stackexchange.com/questions/132831/what-is-the-point-of-update-independent-rendering-in-a-game-loop
+
+    //this->grabMouse();
 
     // Build game engine.
     mEngine = new GameEngine();
+    mUpdateTimer.start();
+    mRenderingTimer.start();
 
-    mElapsedTimer.start();
+    QApplication::setOverrideCursor(Qt::BlankCursor);
 }
 
 R4GLWidget::~R4GLWidget()
@@ -52,17 +64,19 @@ R4GLWidget::~R4GLWidget()
 
 void R4GLWidget::gameLoopIteration()
 {
-    qint64 T = mElapsedTimer.elapsed();
-    double FPS = 1000.0/(T > 0 ? T : 1);
-    //qDebug() << "FPS = " << FPS << "\n";
+    qint64 T = mUpdateTimer.elapsed();
+    double FPS = 1000.0 / (T > 0 ? T : 1);
+    qDebug() << "UPDATE FPS = " << FPS << "\n";
     this->setWindowTitle("R4 | " + QString::number(static_cast<int>(FPS)) + " Hz");
 
+    makeCurrent();
+
     // Update game engine.
-    mEngine->Update();
+    mEngine->Update(mMouseState, mPressedKeys);
 
     QOpenGLWidget::update();
 
-    mElapsedTimer.restart();
+    mUpdateTimer.restart();
 }
 
 void R4GLWidget::initializeGL()
@@ -83,8 +97,16 @@ void R4GLWidget::resizeGL(int w, int h)
 
 void R4GLWidget::paintGL()
 {
+    qint64 T = mRenderingTimer.elapsed();
+    double FPS = 1000.0/(T > 0 ? T : 1);
+    qDebug() << "RENDERING FPS = " << FPS << "\n";
+    //this->setWindowTitle("R4 | " + QString::number(static_cast<int>(FPS)) + " Hz");
+
     // Render engine.
     mEngine->Render();
+    /*QOpenGLContext::swapBuffers();*/
+
+    mRenderingTimer.restart();
 }
 
 void R4GLWidget::keyPressEvent(QKeyEvent* event)
@@ -104,13 +126,17 @@ void R4GLWidget::keyPressEvent(QKeyEvent* event)
             this->showNormal();
         break;
 
+    case Qt::Key::Key_F2:
+        mOverrideMouseLock = !mOverrideMouseLock;
+        break;
+
     default:
         // Forward keyboard pressed keys.
         mEngine->OnKeyboardPress(mPressedKeys);
         break;
     }
 
-    QOpenGLWidget::update();
+    //QOpenGLWidget::update();
 }
 
 void R4GLWidget::keyReleaseEvent(QKeyEvent* event)
@@ -126,7 +152,7 @@ void R4GLWidget::keyReleaseEvent(QKeyEvent* event)
         break;
     }
 
-    QOpenGLWidget::update();
+    //QOpenGLWidget::update();
 }
 
 void R4GLWidget::mousePressEvent(QMouseEvent* event)
@@ -149,7 +175,7 @@ void R4GLWidget::mousePressEvent(QMouseEvent* event)
     }
 
     // Update content (i.e. render model).
-    QOpenGLWidget::update();
+    //QOpenGLWidget::update();
 }
 
 void R4GLWidget::mouseReleaseEvent(QMouseEvent* event)
@@ -171,22 +197,42 @@ void R4GLWidget::mouseReleaseEvent(QMouseEvent* event)
         mEngine->OnMouseMiddleUp(mMouseState);
     }
    
-    QOpenGLWidget::update();
+    //QOpenGLWidget::update();
 }
 
 void R4GLWidget::mouseMoveEvent(QMouseEvent* event)
 {
-    // Update mouse speed during motion.
-    mMouseState.mSpeed = (event->pos() - mMouseState.mLastPos);  // Divide by time?
-    
-    // Forward mouse event to the engine.
-    mEngine->OnMouseMove(mMouseState);
+    if (mEngine->LockMouse() && !mOverrideMouseLock)
+    {
+        const QRect & rect = geometry();
+        QPoint position = QCursor::pos();
+
+        int xo = rect.left();
+        int yo = rect.top();
+
+        QPoint center = rect.center();
+        QCursor::setPos(center);
+
+        // Update mouse speed during motion.
+        mMouseState.mSpeed = position - center;  // Divide by time?
+
+        // Forward mouse event to the engine.
+        mEngine->OnMouseMove(mMouseState);
+    }
+    else
+    {
+        // Update mouse speed during motion.
+        mMouseState.mSpeed = (event->pos() - mMouseState.mLastPos);  // Divide by time?
+
+        // Forward mouse event to the engine.
+        mEngine->OnMouseMove(mMouseState);
+
+        // Save last position.
+        mMouseState.mLastPos = event->pos();
+    }
 
     // Update content (i.e. render model).
-    QOpenGLWidget::update();
-
-    // Save last position.
-    mMouseState.mLastPos = event->pos();
+    //QOpenGLWidget::update();
 }
 
 // Multikeys: 
@@ -201,10 +247,40 @@ bool R4GLWidget::eventFilter(QObject* obj, QEvent* event)
     {
         mPressedKeys -= ((QKeyEvent*)event)->key();
     }
+    else if (event->type() == QEvent::Move)
+    {
+        //QPoint position = QCursor::pos();
+        //printf("%d\t%d\t\t (w=%d)\n", position.x(), position.y(), this->width());
+    }
 
     // Check if command keys are pressed.
     mMouseState.mCtrlDown  = mPressedKeys.contains(Qt::Key_Control);
     mMouseState.mShiftDown = mPressedKeys.contains(Qt::Key_Shift);
 
     return false;
+}
+
+void R4GLWidget::leaveEvent(QEvent * event)
+{
+    if (mEngine->LockMouse() && !mOverrideMouseLock)
+    {
+        const QRect & rect = geometry();
+        QPoint position = QCursor::pos();
+
+        int xo = rect.left();
+        int yo = rect.top();
+
+        QPoint center = rect.center();
+        QCursor::setPos(center);
+
+        // Update mouse speed during motion.
+        mMouseState.mSpeed = position - center;  // Divide by time?
+    }
+    else
+    {
+        // Do nothing.
+    }
+    
+    event->accept();
+    QWidget::leaveEvent(event);
 }

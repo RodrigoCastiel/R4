@@ -12,10 +12,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="camera\camera.cpp" />
+    <ClCompile Include="camera\fpv_camera.cpp" />
     <ClCompile Include="camera\trackball_camera.cpp" />
     <ClCompile Include="core\game_engine.cpp" />
     <ClCompile Include="core\gl_core.cpp" />
-    <ClCompile Include="entities\terrain_chunk.cpp" />
     <ClCompile Include="helper\r4o_file.cpp" />
     <ClCompile Include="helper\useful_meshes.cpp" />
     <ClCompile Include="mesh\material_lib.cpp" />
@@ -24,6 +24,9 @@
     <ClCompile Include="renderer\debug_renderer.cpp" />
     <ClCompile Include="renderer\phong_renderer.cpp" />
     <ClCompile Include="renderer\render_engine.cpp" />
+    <ClCompile Include="terrain\heightmap_geometry.cpp" />
+    <ClCompile Include="terrain\terrain.cpp" />
+    <ClCompile Include="terrain\terrain_chunk.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera\camera.h" />
@@ -33,7 +36,6 @@
     <ClInclude Include="core\game_engine.h" />
     <ClInclude Include="core\gl_core.h" />
     <ClInclude Include="entities\light.h" />
-    <ClInclude Include="entities\terrain_chunk.h" />
     <ClInclude Include="helper\glb_file.h" />
     <ClInclude Include="helper\mtlb_file.h" />
     <ClInclude Include="helper\r4o_file.h" />
@@ -45,6 +47,9 @@
     <ClInclude Include="renderer\debug_renderer.h" />
     <ClInclude Include="renderer\phong_renderer.h" />
     <ClInclude Include="renderer\render_engine.h" />
+    <ClInclude Include="terrain\heightmap_geometry.h" />
+    <ClInclude Include="terrain\terrain.h" />
+    <ClInclude Include="terrain\terrain_chunk.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{8426A60B-3181-4A3C-97EB-C4DBFCF8E2F7}</ProjectGuid>

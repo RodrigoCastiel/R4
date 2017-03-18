@@ -30,6 +30,7 @@ RenderEngine::~RenderEngine()
     //delete terrainChunk;
     //delete testMesh;
     delete sceneObj;
+    delete terrain;
 }
 
 bool RenderEngine::Load()
@@ -59,17 +60,16 @@ bool RenderEngine::Load()
     mOriginAxis = new AxisMesh(debug_posAttr, debug_colAttr);
 
     // XXX.
-    terrainChunk = new TerrainChunk(3.0f, 350.0f);
-    terrainChunk->Load("../scenery/heightmap/yosemite4.png", "");
+    terrain = new Terrain();
+    terrain->LoadFromR4T("../scenery/yosemite_terrain.r4t");
 
     sceneObj = new StaticObject();
     //sceneObj->LoadFromR4O("../models/simple-trees/BlenderNatureAsset.r4o");
     //sceneObj->LoadFromR4O("../models/peugeot-207/Peugeot_207.r4o");
     //sceneObj->LoadFromR4O("../models/grass/Grass_02.r4o");
     //sceneObj->LoadFromR4O("../models/The City/city2.r4o");
-    sceneObj->LoadFromR4O("../models/raider/raider.r4o");
-    //sceneObj->LoadFromR4O("../models/hand-flashlight/hand_light.r4o");
-        //sceneObj->LoadFromR4O("../models/x-wing/star wars x-wing.r4o");
+    //sceneObj->LoadFromR4O("../models/raider/raider.r4o");
+    //sceneObj->LoadFromR4O("../models/x-wing/star wars x-wing.r4o");
 
     return true;
 }
@@ -123,14 +123,15 @@ void RenderEngine::Render(Camera* camera)
     mPhongRenderer->DisableNormalMap();
     model.setToIdentity();
 
-
     mPhongRenderer->SetModelMatrix(model);
     mPhongRenderer->EnableColorMap();
-    terrainChunk->Render(mPhongRenderer);
+    terrain->Render(mPhongRenderer);
 
     model.scale(1e-2);
+    mPhongRenderer->EnableColorMap();
+    mPhongRenderer->DisableNormalMap();
     mPhongRenderer->SetModelMatrix(model);
-    sceneObj->Render(mPhongRenderer);
+    //sceneObj->Render(mPhongRenderer);
     
     // Render transparent objects such as leaves and trees.
 }

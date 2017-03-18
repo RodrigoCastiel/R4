@@ -13,8 +13,10 @@
 
 #include "core/gl_core.h" 
 
-#include "mesh/material_lib.h"
 #include "mesh/mesh_group.h"
+#include "mesh/material_lib.h"
+
+#include "heightmap_geometry.h"
 
 namespace engine
 {
@@ -24,13 +26,13 @@ class TerrainChunk
 {
 public:
     // +++ Constructors +++ ---------------------------------------------------
-    TerrainChunk(float scale = 3.0f, float height_scale = 200.0f);
+    TerrainChunk();
     ~TerrainChunk();
 
     // +++ Initialization +++ -------------------------------------------------
     
     // Builds up all geometry.
-    bool Load(const std::string & heightmapPath, const std::string & texture1Path);
+    bool Load(const HeightmapGeometry & geometry, int xo, int yo, int w, int h);
 
     void UpdateMesh();
 
@@ -39,12 +41,8 @@ public:
     void Render(class PhongRenderer* renderer) const;
 
     // +++ Getters/Setters +++ ------------------------------------------------
-
-    MeshGroup* GetMeshGroup() { return mTerrainMesh; }
-    const Material & GetMaterial() { return mMaterial; }
     
-    QOpenGLTexture* GetTexture(int index) { return mTextureList[index]; }
-    int GetNumTextures() const { return mTextureList.size(); }
+    MeshGroup* GetMeshGroup() { return mTerrainMesh; }
 
     float* PositionAt(int u, int v);
     float* NormalAt(int u, int v);
@@ -52,12 +50,6 @@ public:
     //float* TangentAt(int u, int v);
 
 private:
-    // Terrain geometry.
-    //int mResolutionX;   // Number of vertices along x.
-    //int mResolutionZ;   // Number of vertices along z.
-    float mScale;         // Scale of a single tile.
-    float mHeightScale;   // Scale of y-axis.
-    
     std::vector<float> mPositions;  // Vertex positions.
     std::vector<float> mNormals;    // Vertex normals.
     std::vector<float> mUVs;        // Vertex UV coordinates.
@@ -66,10 +58,9 @@ private:
 
     // Renderable mesh.
     MeshGroup* mTerrainMesh;
-    Material mMaterial;
 
-    QImage mHeightmap;                          // Heightmap image.
-    std::vector<QOpenGLTexture*> mTextureList;  // Set of textures.
+    int mWidth;  // Along u.
+    int mHeight; // Along v.
 };
 
 // === INLINE METHODS ===
@@ -77,22 +68,19 @@ private:
 inline
 float* TerrainChunk::PositionAt(int u, int v)
 {
-    const int w = mHeightmap.size().width();
-    return &mPositions[3*(w*v + u)];
+    return &mPositions[3*(mWidth*v + u)];
 }
 
 inline
 float* TerrainChunk::NormalAt(int u, int v)
 {
-    const int w = mHeightmap.size().width();
-    return &mNormals[3*(w*v + u)];
+    return &mNormals[3*(mWidth*v + u)];
 }
 
 inline
 float* TerrainChunk::UvAt(int u, int v)
 {
-    const int w = mHeightmap.size().width();
-    return &mUVs[2*(w*v + u)];
+    return &mUVs[2*(mWidth*v + u)];
 }
 
 

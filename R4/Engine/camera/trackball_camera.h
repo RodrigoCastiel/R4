@@ -38,12 +38,9 @@ public:
     void Dolly(float d_radius) { mRadius += d_radius; }
 
     void Rotate(const QPoint & mouseSpeed, float sensibility = 0.25f);
-    void Dolly (const QPoint & mouseSpeed, float sensibility = 0.01f);
+    void Dolly (const QPoint & mouseSpeed, float sensibility = 0.05f);
 
     // +++ Getter/Setters +++ ---------------------------------------------------------------------
-
-    inline void SetProjMatrix(const QMatrix4x4 & proj) { mProj = proj; }
-    inline void SetViewMatrix(const QMatrix4x4 & view) { mView = view; }
 
     inline void SetDistanceToTarget(float dist) { mRadius = dist; }
     inline float GetDistanceToTarget() { return mRadius; }

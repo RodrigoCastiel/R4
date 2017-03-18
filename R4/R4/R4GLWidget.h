@@ -3,6 +3,7 @@
 #include <QSet>
 #include <QElapsedTimer>
 #include <QOpenGLWidget>
+#include "qopenglwidget.h"
 namespace Ui { class R4GLWidget; };
 
 #include "core/game_engine.h"
@@ -32,6 +33,10 @@ public:
 
     virtual bool eventFilter(QObject* obj, QEvent* event);
 
+protected:
+
+    virtual void leaveEvent(QEvent* event);
+
 private slots:
 
     // Game update events.
@@ -42,8 +47,10 @@ private:
     QSet<int> mPressedKeys;
     engine::GameEngine* mEngine;
     engine::MouseState mMouseState;
+    bool mOverrideMouseLock;
 
-    QElapsedTimer mElapsedTimer;
+    QElapsedTimer mUpdateTimer;
+    QElapsedTimer mRenderingTimer;
 
     Ui::R4GLWidget *ui;
 };

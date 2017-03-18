@@ -25,6 +25,9 @@
     <Filter Include="entities">
       <UniqueIdentifier>{45d685eb-b7da-4694-95c1-dbee11465485}</UniqueIdentifier>
     </Filter>
+    <Filter Include="terrain">
+      <UniqueIdentifier>{9cbf6eee-444a-427a-bc77-66a8b2a33ac5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\gl_core.h">
@@ -63,9 +66,6 @@
     <ClInclude Include="entities\light.h">
       <Filter>entities</Filter>
     </ClInclude>
-    <ClInclude Include="entities\terrain_chunk.h">
-      <Filter>entities</Filter>
-    </ClInclude>
     <ClInclude Include="mesh\static_object.h">
       <Filter>mesh</Filter>
     </ClInclude>
@@ -83,6 +83,15 @@
     </ClInclude>
     <ClInclude Include="camera\fpv_camera.h">
       <Filter>camera</Filter>
+    </ClInclude>
+    <ClInclude Include="terrain\terrain.h">
+      <Filter>terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="terrain\terrain_chunk.h">
+      <Filter>terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="terrain\heightmap_geometry.h">
+      <Filter>terrain</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -113,9 +122,6 @@
     <ClCompile Include="renderer\phong_renderer.cpp">
       <Filter>renderer</Filter>
     </ClCompile>
-    <ClCompile Include="entities\terrain_chunk.cpp">
-      <Filter>entities</Filter>
-    </ClCompile>
     <ClCompile Include="mesh\static_object.cpp">
       <Filter>mesh</Filter>
     </ClCompile>
@@ -124,6 +130,18 @@
     </ClCompile>
     <ClCompile Include="helper\r4o_file.cpp">
       <Filter>helper</Filter>
+    </ClCompile>
+    <ClCompile Include="camera\fpv_camera.cpp">
+      <Filter>camera</Filter>
+    </ClCompile>
+    <ClCompile Include="terrain\terrain.cpp">
+      <Filter>terrain</Filter>
+    </ClCompile>
+    <ClCompile Include="terrain\terrain_chunk.cpp">
+      <Filter>terrain</Filter>
+    </ClCompile>
+    <ClCompile Include="terrain\heightmap_geometry.cpp">
+      <Filter>terrain</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

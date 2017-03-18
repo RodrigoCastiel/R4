@@ -13,7 +13,8 @@
 #include "core/gl_core.h"
 #include "camera/camera.h"
 #include "helper/useful_meshes.h"
-#include "entities/terrain_chunk.h"
+#include "terrain/terrain.h"
+#include "terrain/terrain_chunk.h"
 #include "mesh/static_object.h"
 
 #include "debug_renderer.h"
@@ -43,6 +44,9 @@ public:
     // +++ Debug +++ ----------------------------------------------------------
     void SetDebugRendering(bool debugRenderingOn) { mDebugRendering = debugRenderingOn; }
 
+    // XXX.
+    Terrain* GetTerrain() { return terrain; }
+
 private:
 
     // Renderers.
@@ -53,9 +57,9 @@ private:
     bool mDebugRendering;
     AxisMesh* mOriginAxis;
 
-    // XXX.
+    // XXX tmp.
+    Terrain* terrain;
     StaticObject* sceneObj;
-    TerrainChunk* terrainChunk;
 };
 
 }  // namespace engine.
